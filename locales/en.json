@@ -1,0 +1,142 @@
+{
+    "home": {
+        "title": "TicTac\nPartyPack",
+        "play": "Play",
+        "settings": "Settings"
+    },
+    "settings": {
+        "title": "Settings",
+        "language": "Language",
+        "back": "Back",
+        "select_language": "Select Language",
+        "min_time": "Min Time (sec)",
+        "max_time": "Max Time (sec)",
+        "languages": {
+            "en": "English",
+            "es": "Spanish"
+        }
+    },
+    "config": {
+        "title": "Game Setup",
+        "modes": {
+            "classic": "Classic",
+            "custom": "Custom",
+            "simple": "Bomb Only"
+        },
+        "descriptions": {
+            "classic": "Mix of all games for the full experience.",
+            "simple": "No challenges, just the bomb. Great for external games."
+        },
+        "simple_ideas": {
+            "title": "Ideas to play:",
+            "list": [
+                "Shoot a ball into a cup.",
+                "Touch something of a specific color.",
+                "Name a car brand.",
+                "Do 3 squats.",
+                "Name a Disney character.",
+                "Pass the bomb after a high five."
+            ]
+        },
+        "select_games": "Select your favorite games:",
+        "guess_max": "Guess the Number Max",
+        "multiply_min": "Multiply Min",
+        "multiply_max": "Multiply Max",
+        "forbidden_letter_max": "Forbidden Letter Max",
+        "game_settings": "Specific Game Settings"
+    },
+    "game": {
+        "back": "← Exit",
+        "start_instruction": "Tap Start",
+        "how_to_play": "How To Play",
+        "close_instructions": "Got it!",
+        "status": {
+            "boom": "BOOM!",
+            "quick": "HURRY!",
+            "ready": "READY"
+        },
+        "instruction": {
+            "starts_with": "Word starting with:",
+            "ends_with": "Word ending with:",
+            "contains": "Word containing:",
+            "rps": "Win to pass!",
+            "word_chain": "Start the chain!",
+            "guess_number": "Guess the number!",
+            "categories": "Category:",
+            "multiples": "Multiples of:",
+            "coin_flip": "Heads or Tails",
+            "flip_coin": "Flip Coin",
+            "flipping": "Flipping...",
+            "heads": "Heads",
+            "tails": "Tails",
+            "look_away": "Win the duel!",
+            "alphabet": "Follow the alphabet:",
+            "forbidden_letter": "DO NOT use the letter:",
+            "forbidden_letter_words": "Say {{count}} words"
+        },
+        "result": {
+            "over": "GAME OVER!",
+            "syllable": "The challenge was: "
+        },
+        "actions": {
+            "next": "Next Round",
+            "start": "Start",
+            "start_bomb": "Ignite Bomb",
+            "new_round": "New Challenge",
+            "pass": "PASS!",
+            "simulate": "BOOM!"
+        }
+    },
+    "bomb": {
+        "status": {
+            "tictac": "TIC TAC",
+            "stopped": "STOPPED",
+            "active": "BOMB ACTIVE"
+        }
+    },
+    "challengeDisplay": {
+        "label": "CHALLENGE"
+    },
+    "instructions": {
+        "Classic": {
+            "title": "Syllable Game",
+            "text": "1. A syllable and a instruction will appear.\n2. Say a word that matches the instruction.\n3. Pass the bomb to the next player.\n4. Don't let it explode in your hands!\n\nNote: Difficulty can be regulated by choosing whether the syllable is interpreted literally or phonetically."
+        },
+        "RockPaperScissors": {
+            "title": "Rock, Paper, Scissors",
+            "text": "1. Challenge the player to your right to RPS.\n2. If you WIN, pass the bomb.\n3. If you LOSE or TIE, keep the bomb and try again.\n4. The bomb explodes if you don't win fast!"
+        },
+        "WordChain": {
+            "title": "Word Chain",
+            "text": "1. The first person says a random word.\n2. The next must say a word starting with the last letters of the previous word.\n3. Pass the bomb after your word.\n4. Don't get stuck!\n\nNote: Rules can vary using last 2 letters or last syllable."
+        },
+        "GuessNumber": {
+            "title": "Guess the Number",
+            "text": "1. When the bomb starts, a number between 3 and {{guessMax}} will appear.\n2. You and the next player must say a number from 1 to that number at the same time.\n3. If you say the same number, pass the bomb.\n4. If not, keep trying quickly!"
+        },
+        "Categories": {
+            "title": "Categories",
+            "text": "1. A category will appear on the screen.\n2. You must say something that belongs to that category.\n3. Pass the bomb after a correct answer.\n4. Don't repeat what has already been said!"
+        },
+        "Multiply": {
+            "title": "Multiply",
+            "text": "1. A number between {{multiplyMin}} and {{multiplyMax}} will appear.\n2. Each player must say the next multiple of that number.\n3. Pass the bomb after saying the correct multiple.\n4. Don't make a mistake in your math!"
+        },
+        "CoinFlip": {
+            "title": "Coin Flip",
+            "text": "1. Choose Heads or Tails.\n2. Flip a real coin or use the app button.\n3. If you guess right, pass the bomb.\n4. If you miss, try again quickly!"
+        },
+        "LookAway": {
+            "title": "Look Away!",
+            "text": "1. Challenge the next player.\n2. Point in a direction (up, down, left, right) while saying 'Look Away!'.\n3. If the other player looks in the SAME direction, you pass the bomb.\n4. If they look away, keep going and try again!"
+        },
+        "Alphabet": {
+            "title": "The Alphabet",
+            "text": "1. A category will appear (e.g., 'Animals').\n2. The first player says an item from that category starting with 'A'.\n3. The next player says one with 'B', and so on.\n4. Pass the bomb after answering correctly!"
+        },
+        "ForbiddenLetter": {
+            "title": "Forbidden Letter",
+            "text": "1. A forbidden letter and a number will appear on screen.\n2. You must say that number of words WITHOUT using the forbidden letter.\n3. You cannot repeat words that have already been said in this round.\n4. Pass the bomb when you complete all words correctly!\n\nNote: The number of words varies between 3 and the configured maximum."
+        }
+    }
+}
