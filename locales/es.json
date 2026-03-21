@@ -1,143 +1,146 @@
 {
-    "home": {
-        "title": "TicTac\nPartyPack",
-        "play": "Jugar",
-        "settings": "Configuración"
+  "home": {
+    "title": "TicTac\nPartyPack",
+    "play": "Jugar",
+    "settings": "Configuración"
+  },
+  "settings": {
+    "title": "Configuración",
+    "language": "Idioma",
+    "back": "Guardar y Salir",
+    "timer": "Temporizador",
+    "select_language": "Seleccionar Idioma",
+    "min_time": "Tiempo Mínimo (seg)",
+    "max_time": "Tiempo Máximo (seg)",
+    "languages": {
+      "en": "Inglés",
+      "es": "Español"
     },
-    "settings": {
-        "title": "Configuración",
-        "language": "Idioma",
-        "back": "Volver",
-        "select_language": "Seleccionar Idioma",
-        "min_time": "Tiempo Mínimo (seg)",
-        "max_time": "Tiempo Máximo (seg)",
-        "languages": {
-            "en": "Inglés",
-            "es": "Español"
-        },
-        "background": "Fondo"
+    "background": "Fondo"
+  },
+  "config": {
+    "title": "Configurar Partida",
+    "modes": {
+      "classic": "Clásico",
+      "custom": "A Medida",
+      "simple": "Solo Bomba"
     },
-    "config": {
-        "title": "Configurar Partida",
-        "modes": {
-            "classic": "Clásico",
-            "custom": "A Medida",
-            "simple": "Solo Bomba"
-        },
-        "descriptions": {
-            "classic": "Mezcla de todos los juegos para una experiencia total.",
-            "simple": "Sin retos, solo la bomba. Ideal para juegos externos."
-        },
-        "simple_ideas": {
-            "title": "Ideas para jugar:",
-            "list": [
-                "Encesta una pelota en un vaso.",
-                "Toca algo de un color seleccionado.",
-                "Di una marca de coches.",
-                "Haz 3 sentadillas.",
-                "Nombra a un personaje de Disney.",
-                "Pasa la bomba tras un choque de palmas."
-            ]
-        },
-        "select_games": "Selecciona tus juegos favoritos:",
-        "guess_max": "Máximo 'Adivina el Número'",
-        "multiply_min": "Mínimo 'Multiplicar'",
-        "multiply_max": "Máximo 'Multiplicar'",
-        "forbidden_letter_max": "Máximo 'Letra Prohibida'",
-        "game_settings": "Ajustes específicos"
+    "descriptions": {
+      "classic": "Mezcla de todos los juegos para una experiencia total.",
+      "simple": "Sin retos, solo la bomba. Ideal para juegos externos."
     },
-    "game": {
-        "back": "← Salir",
-        "start_instruction": "Toca Comenzar",
-        "how_to_play": "Cómo Jugar",
-        "close_instructions": "Entendido",
-        "status": {
-            "boom": "¡BOOM!",
-            "quick": "¡RÁPIDO!",
-            "ready": "PREPARADOS"
-        },
-        "instruction": {
-            "starts_with": "Palabra que empiece por:",
-            "ends_with": "Palabra que termine en:",
-            "contains": "Palabra que contenga:",
-            "rps": "¡Gana para pasar!",
-            "word_chain": "¡Crea la cadena!",
-            "guess_number": "¡Adivina el número!",
-            "categories": "Categoría:",
-            "multiples": "Múltiplos de:",
-            "coin_flip": "Cara o Cruz",
-            "flip_coin": "Lanzar Moneda",
-            "flipping": "Lanzando...",
-            "heads": "Cara",
-            "tails": "Cruz",
-            "look_away": "¡Gana el duelo!",
-            "alphabet": "Sigue el abecedario:",
-            "forbidden_letter": "NO uses la letra:",
-            "forbidden_letter_words": "Di {{count}} palabras"
-        },
-        "result": {
-            "over": "¡SE ACABÓ!",
-            "syllable": "El reto era: "
-        },
-        "actions": {
-            "next": "Siguiente Ronda",
-            "start": "Comenzar",
-            "start_bomb": "Encender Bomba",
-            "new_round": "Nuevo Desafío",
-            "pass": "¡PASAR!",
-            "simulate": "¡BOMBA!"
-        }
+    "simple_ideas": {
+      "title": "Ideas para jugar:",
+      "list": [
+        "Encesta una pelota en un vaso.",
+        "Toca algo de un color seleccionado.",
+        "Di una marca de coches.",
+        "Haz 3 sentadillas.",
+        "Nombra a un personaje de Disney.",
+        "Pasa la bomba tras un choque de palmas."
+      ]
     },
-    "bomb": {
-        "status": {
-            "tictac": "TIC TAC",
-            "stopped": "PARADO",
-            "active": "BOMBA ACTIVA"
-        }
+    "select_games": "Selecciona tus juegos favoritos:",
+    "select_at_least_one": "Selecciona al menos un juego",
+    "guess_max": "Máximo 'Adivina el Número'",
+    "multiply_min": "Mínimo 'Multiplicar'",
+    "multiply_max": "Máximo 'Multiplicar'",
+    "forbidden_letter_max": "Máximo 'Letra Prohibida'",
+    "game_settings": "Ajustes específicos"
+  },
+  "game": {
+    "back": "← Salir",
+    "start_instruction": "Toca Comenzar",
+    "how_to_play": "Cómo Jugar",
+    "close_instructions": "Entendido",
+    "status": {
+      "boom": "¡BOOM!",
+      "quick": "¡RÁPIDO!",
+      "ready": "PREPARADOS"
     },
-    "challengeDisplay": {
-        "label": "RETO"
+    "instruction": {
+      "starts_with": "Palabra que empiece por:",
+      "ends_with": "Palabra que termine en:",
+      "contains": "Palabra que contenga:",
+      "rps": "¡Gana para pasar!",
+      "word_chain": "¡Crea la cadena!",
+      "guess_number": "¡Adivina el número!",
+      "categories": "Categoría:",
+      "multiples": "Múltiplos de:",
+      "coin_flip": "Cara o Cruz",
+      "flip_coin": "Lanzar Moneda",
+      "flipping": "Lanzando...",
+      "heads": "Cara",
+      "tails": "Cruz",
+      "look_away": "¡Gana el duelo!",
+      "alphabet": "Sigue el abecedario:",
+      "forbidden_letter": "NO uses la letra:",
+      "forbidden_letter_words": "Di {{count}} palabras"
     },
-    "instructions": {
-        "Classic": {
-            "title": "Juego de Sílabas",
-            "text": "1. Aparecerá una sílaba y una instruccion en la pantalla.\n2. Debes decir una palabra que cumpla con la instruccion.\n3. Pasa la bomba al siguiente jugador.\n4. ¡No dejes que explote en tus manos!\n\nNota: Se puede regular la dificultad haciendo que la sílaba sea interpretada literalmente o fonéticamente."
-        },
-        "RockPaperScissors": {
-            "title": "Piedra, Papel o Tijera",
-            "text": "1. Retas al jugador de tu derecha a un Piedra, Papel o Tijera.\n2. Si GANAS, pasas la bomba.\n3. Si PIERDES o EMPATAS, te quedas la bomba y juegas de nuevo.\n4. ¡La bomba explota si no ganas rápido!"
-        },
-        "WordChain": {
-            "title": "Cadena de Palabras",
-            "text": "1. El primer jugador dice una palabra al azar.\n2. El siguiente debe decir una palabra que empiece con las últimas letras de la palabra anterior.\n3. Pasa la bomba al completar tu palabra.\n4. ¡Cuidado con no trabarte!\n\nNota: Pueden variar las reglas usando las últimas 2 letras o la última sílaba."
-        },
-        "GuessNumber": {
-            "title": "Adivina el número",
-            "text": "1. Al iniciar la bomba aparecerá un número del 3 al {{guessMax}}.\n2. Tú y el siguiente jugador deben decir un número del 1 al indicado al mismo tiempo.\n3. Si dicen el mismo número, pasas la bomba.\n4. Si no, ¡sigue intentando rápido!"
-        },
-        "Categories": {
-            "title": "Categorías",
-            "text": "1. Aparecerá una categoría en pantalla.\n2. Debes decir algo que pertenezca a esa categoría.\n3. Pasa la bomba al responder correctamente.\n4. ¡No repitas lo que ya dijeron!"
-        },
-        "Multiply": {
-            "title": "Multiplica",
-            "text": "1. Aparecerá un número entre {{multiplyMin}} y {{multiplyMax}}.\n2. Cada jugador debe decir el siguiente múltiplo de ese número (empezando por el número mismo x1).\n3. Pasa la bomba al decir el múltiplo correcto.\n4. ¡No te equivoques en el cálculo!"
-        },
-        "CoinFlip": {
-            "title": "Lanzar Moneda",
-            "text": "1. Elige Cara o Cruz.\n2. Lanza una moneda real o usa el botón de la app.\n3. Si aciertas, pasas la bomba.\n4. Si fallas, ¡vuelve a intentarlo rápido!"
-        },
-        "LookAway": {
-            "title": "¡No mires allá!",
-            "text": "1. Desafía al siguiente jugador.\n2. Señala una dirección (arriba, abajo, izquierda, derecha) mientras dices '¡No mires allá!'.\n3. Si el otro jugador mira en la MISMA dirección, tú pasas la bomba.\n4. Si mira hacia otro lado, ¡sigues tú y vuelves a intentar!"
-        },
-        "Alphabet": {
-            "title": "El Abecedario",
-            "text": "1. Aparecerá una categoría (ej: 'Animales').\n2. El primer jugador dice un elemento de esa categoría que empiece con la 'A'.\n3. El siguiente jugador dice uno con la 'B', y así sucesivamente.\n4. ¡Pasa la bomba al responder correctamente!"
-        },
-        "ForbiddenLetter": {
-            "title": "Letra Prohibida",
-            "text": "1. Aparecerá una letra prohibida y un número en pantalla.\n2. Debes decir ese número de palabras SIN usar la letra prohibida.\n3. No puedes repetir palabras que ya se dijeron anteriormente en esta ronda.\n4. ¡Pasa la bomba al completar todas las palabras correctamente!\n\nNota: El número de palabras varía entre 3 y el máximo configurado."
-        }
+    "result": {
+      "over": "¡SE ACABÓ!",
+      "syllable": "El reto era: "
+    },
+    "actions": {
+      "next": "Siguiente Ronda",
+      "start": "Comenzar",
+      "start_bomb": "Encender Bomba",
+      "new_round": "Nuevo Desafío",
+      "pass": "¡PASAR!",
+      "simulate": "¡BOMBA!",
+      "simulate_hint": "Detona la bomba manualmente"
     }
+  },
+  "bomb": {
+    "status": {
+      "tictac": "TIC TAC",
+      "stopped": "PARADO",
+      "active": "BOMBA ACTIVA"
+    }
+  },
+  "challengeDisplay": {
+    "label": "RETO"
+  },
+  "instructions": {
+    "Classic": {
+      "title": "Juego de Sílabas",
+      "text": "1. Aparecerá una sílaba y una instruccion en la pantalla.\n2. Debes decir una palabra que cumpla con la instruccion.\n3. Pasa la bomba al siguiente jugador.\n4. ¡No dejes que explote en tus manos!\n\nNota: Se puede regular la dificultad haciendo que la sílaba sea interpretada literalmente o fonéticamente."
+    },
+    "RockPaperScissors": {
+      "title": "Piedra, Papel o Tijera",
+      "text": "1. Retas al jugador de tu derecha a un Piedra, Papel o Tijera.\n2. Si GANAS, pasas la bomba.\n3. Si PIERDES o EMPATAS, te quedas la bomba y juegas de nuevo.\n4. ¡La bomba explota si no ganas rápido!"
+    },
+    "WordChain": {
+      "title": "Cadena de Palabras",
+      "text": "1. El primer jugador dice una palabra al azar.\n2. El siguiente debe decir una palabra que empiece con las últimas letras de la palabra anterior.\n3. Pasa la bomba al completar tu palabra.\n4. ¡Cuidado con no trabarte!\n\nNota: Pueden variar las reglas usando las últimas 2 letras o la última sílaba."
+    },
+    "GuessNumber": {
+      "title": "Adivina el número",
+      "text": "1. Al iniciar la bomba aparecerá un número del 3 al {{guessMax}}.\n2. Tú y el siguiente jugador deben decir un número del 1 al indicado al mismo tiempo.\n3. Si dicen el mismo número, pasas la bomba.\n4. Si no, ¡sigue intentando rápido!"
+    },
+    "Categories": {
+      "title": "Categorías",
+      "text": "1. Aparecerá una categoría en pantalla.\n2. Debes decir algo que pertenezca a esa categoría.\n3. Pasa la bomba al responder correctamente.\n4. ¡No repitas lo que ya dijeron!"
+    },
+    "Multiply": {
+      "title": "Multiplica",
+      "text": "1. Aparecerá un número entre {{multiplyMin}} y {{multiplyMax}}.\n2. Cada jugador debe decir el siguiente múltiplo de ese número (empezando por el número mismo x1).\n3. Pasa la bomba al decir el múltiplo correcto.\n4. ¡No te equivoques en el cálculo!"
+    },
+    "CoinFlip": {
+      "title": "Lanzar Moneda",
+      "text": "1. Elige Cara o Cruz.\n2. Lanza una moneda real o usa el botón de la app.\n3. Si aciertas, pasas la bomba.\n4. Si fallas, ¡vuelve a intentarlo rápido!"
+    },
+    "LookAway": {
+      "title": "¡No mires allá!",
+      "text": "1. Desafía al siguiente jugador.\n2. Señala una dirección (arriba, abajo, izquierda, derecha) mientras dices '¡No mires allá!'.\n3. Si el otro jugador mira en la MISMA dirección, tú pasas la bomba.\n4. Si mira hacia otro lado, ¡sigues tú y vuelves a intentar!"
+    },
+    "Alphabet": {
+      "title": "El Abecedario",
+      "text": "1. Aparecerá una categoría (ej: 'Animales').\n2. El primer jugador dice un elemento de esa categoría que empiece con la 'A'.\n3. El siguiente jugador dice uno con la 'B', y así sucesivamente.\n4. ¡Pasa la bomba al responder correctamente!"
+    },
+    "ForbiddenLetter": {
+      "title": "Letra Prohibida",
+      "text": "1. Aparecerá una letra prohibida y un número en pantalla.\n2. Debes decir ese número de palabras SIN usar la letra prohibida.\n3. No puedes repetir palabras que ya se dijeron anteriormente en esta ronda.\n4. ¡Pasa la bomba al completar todas las palabras correctamente!\n\nNota: El número de palabras varía entre 3 y el máximo configurado."
+    }
+  }
 }

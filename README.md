@@ -34,51 +34,67 @@ TicTac PartyPack es un juego de fiesta móvil donde los jugadores compiten contr
 
 ### Requisitos previos
 
-- Node.js (v16 o superior)
-- npm o yarn
-- Expo CLI
-- Dispositivo móvil con Expo Go (para pruebas) o emulador
+- Node.js (v18 o superior)
+- npm
+- Dispositivo móvil con [Expo Go](https://expo.dev/go) instalado, o emulador Android/simulador iOS
 
 ### Pasos de instalación
 
 1. Clona el repositorio:
+
 ```bash
 git clone https://github.com/tu-usuario/TicTacPartyPack.git
 cd TicTacPartyPack
 ```
 
 2. Instala las dependencias:
+
 ```bash
 npm install
 ```
 
-3. Inicia el servidor de desarrollo:
+3. Inicia el servidor de desarrollo con tunnel (necesario para usar Expo Go en dispositivos físicos):
+
 ```bash
-npm start
+npx expo start --tunnel
 ```
+
+> **¿Por qué `--tunnel`?** Expo Go en un dispositivo físico necesita conectarse al servidor de Metro. El flag `--tunnel` usa ngrok para crear una URL pública accesible desde cualquier red, evitando problemas de firewall o redes distintas entre el PC y el móvil.
 
 4. Escanea el código QR con Expo Go (Android) o la app de Cámara (iOS)
 
 ## 📦 Scripts disponibles
 
-- `npm start` - Inicia el servidor de desarrollo de Expo
-- `npm run android` - Ejecuta la app en un emulador/dispositivo Android
-- `npm run ios` - Ejecuta la app en un simulador/dispositivo iOS
-- `npm run web` - Ejecuta la app en el navegador web
+| Comando                    | Descripción                                                                    |
+| -------------------------- | ------------------------------------------------------------------------------ |
+| `npx expo start --tunnel`  | Servidor de desarrollo con tunnel (recomendado para dispositivos físicos)      |
+| `npx expo start`           | Servidor de desarrollo en red local (solo si PC y móvil están en la misma red) |
+| `npx expo start --android` | Abre en emulador/dispositivo Android                                           |
+| `npx expo start --ios`     | Abre en simulador/dispositivo iOS                                              |
+| `npx expo start --web`     | Abre en el navegador web                                                       |
+| `npm run lint`             | Ejecuta ESLint                                                                 |
+| `npm run format`           | Formatea el código con Prettier                                                |
+| `npm test`                 | Ejecuta los tests con Jest                                                     |
+| `npm run typecheck`        | Verificación de tipos con TypeScript                                           |
 
 ## 🎮 Modos de Juego
 
 ### 🎲 Modo Clásico
+
 Mezcla aleatoria de todos los mini-juegos para una experiencia completa y variada.
 
 ### 🎯 Modo A Medida
+
 Selecciona tus mini-juegos favoritos y personaliza la configuración específica de cada uno:
+
 - Rango de números para "Adivina el Número"
 - Multiplicadores mínimos y máximos
 - Cantidad de palabras para "Letra Prohibida"
 
 ### 💣 Modo Solo Bomba
+
 Sin retos predefinidos, solo la bomba con temporizador. Ideal para crear tus propios desafíos externos:
+
 - Desafíos físicos
 - Preguntas personalizadas
 - Actividades creativas
@@ -174,11 +190,13 @@ eas update --branch preview --message "Testing new features"
 ### Distribución
 
 #### Android
+
 - **APK**: Ideal para distribución interna o testing
 - **AAB**: Requerido para Google Play Store
 - Descarga el build desde tu dashboard de Expo y sube a Google Play Console
 
 #### iOS
+
 - Descarga el `.ipa` desde tu dashboard de Expo
 - Sube a App Store Connect usando Transporter o Xcode
 
@@ -199,12 +217,14 @@ eas build --platform ios --profile preview
 Si necesitas configurar variables de entorno para producción:
 
 1. Crea un archivo `.env.production`:
+
 ```bash
 API_URL=https://tu-api.com
 APP_ENV=production
 ```
 
 2. Actualiza [app.json](app.json) para incluir las variables:
+
 ```json
 {
   "expo": {

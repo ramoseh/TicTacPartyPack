@@ -1,5 +1,5 @@
-export const RPS_ICONS = "✊ ✋ ✌️";
+export const RPS_ICONS = '✊ ✋ ✌️';
 
 export function getRPSPrompt(): string {
-    return RPS_ICONS;
+  return RPS_ICONS;
 }
