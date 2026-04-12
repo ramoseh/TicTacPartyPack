@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Términos y Privacidad — TicTacPartyPack</title>
+    <style>
+      :root {
+        --bg: #0f0f1b;
+        --surface: #1a1a2e;
+        --accent: #e94560;
+        --accent-soft: #f7b731;
+        --text: #e8e8f0;
+        --muted: #9090a8;
+        --border: #2a2a40;
+        --radius: 12px;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background-color: var(--bg);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+        line-height: 1.7;
+        font-size: 16px;
+      }
+
+      header {
+        background: var(--surface);
+        border-bottom: 1px solid var(--border);
+        padding: 28px 24px;
+        text-align: center;
+      }
+
+      header h1 {
+        font-size: 2rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+
+      header h1 span {
+        color: var(--accent);
+      }
+
+      header p {
+        color: var(--muted);
+        margin-top: 6px;
+        font-size: 0.9rem;
+      }
+
+      .lang-switcher {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .lang-btn {
+        background: var(--border);
+        border: none;
+        color: var(--text);
+        padding: 6px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: background 0.2s;
+      }
+
+      .lang-btn.active,
+      .lang-btn:hover {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      main {
+        max-width: 780px;
+        margin: 0 auto;
+        padding: 40px 24px 80px;
+      }
+
+      .toc {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 20px 24px;
+        margin-bottom: 40px;
+      }
+
+      .toc h2 {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--accent-soft);
+        margin-bottom: 12px;
+      }
+
+      .toc ol {
+        padding-left: 20px;
+      }
+
+      .toc li {
+        margin-bottom: 4px;
+      }
+
+      .toc a {
+        color: var(--muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+      }
+
+      .toc a:hover {
+        color: var(--text);
+      }
+
+      section {
+        margin-bottom: 48px;
+      }
+
+      h2 {
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border);
+        color: var(--accent-soft);
+        scroll-margin-top: 24px;
+      }
+
+      h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 20px 0 8px;
+        color: var(--text);
+      }
+
+      p {
+        margin-bottom: 14px;
+        color: var(--text);
+      }
+
+      ul,
+      ol {
+        margin: 10px 0 14px 22px;
+      }
+
+      li {
+        margin-bottom: 6px;
+      }
+
+      .badge {
+        display: inline-block;
+        background: var(--accent);
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        vertical-align: middle;
+        margin-left: 6px;
+      }
+
+      .highlight-box {
+        background: var(--surface);
+        border-left: 3px solid var(--accent);
+        border-radius: 0 var(--radius) var(--radius) 0;
+        padding: 16px 20px;
+        margin: 16px 0;
+        font-size: 0.95rem;
+      }
+
+      .highlight-box.green {
+        border-color: #27ae60;
+      }
+
+      footer {
+        text-align: center;
+        padding: 32px 24px;
+        border-top: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      footer a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .divider {
+        height: 1px;
+        background: var(--border);
+        margin: 56px 0;
+      }
+
+      /* Lang visibility */
+      [data-lang="en"] {
+        display: none;
+      }
+
+      body.lang-en [data-lang="es"] {
+        display: none;
+      }
+
+      body.lang-en [data-lang="en"] {
+        display: block;
+      }
+
+      body.lang-en .lang-btn[data-target="en"] {
+        background: var(--accent);
+        color: #fff;
+      }
+
+      body.lang-en .lang-btn[data-target="es"] {
+        background: var(--border);
+        color: var(--text);
+      }
+
+      @media (max-width: 600px) {
+        header h1 {
+          font-size: 1.5rem;
+        }
+        main {
+          padding: 24px 16px 60px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>TicTac<span>PartyPack</span></h1>
+      <p data-lang="es">Política de Privacidad y Términos de Uso</p>
+      <p data-lang="en">Privacy Policy &amp; Terms of Use</p>
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-target="es" onclick="setLang('es')">
+          Español
+        </button>
+        <button class="lang-btn" data-target="en" onclick="setLang('en')">
+          English
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===================== ESPAÑOL ===================== -->
+      <div data-lang="es">
+        <div class="toc">
+          <h2>Contenido</h2>
+          <ol>
+            <li><a href="#es-intro">Introducción</a></li>
+            <li><a href="#es-datos">Datos que recopilamos</a></li>
+            <li><a href="#es-publicidad">Publicidad</a></li>
+            <li><a href="#es-compras">Compras en la aplicación</a></li>
+            <li><a href="#es-terceros">Servicios de terceros</a></li>
+            <li><a href="#es-menores">Menores de edad</a></li>
+            <li><a href="#es-seguridad">Seguridad</a></li>
+            <li><a href="#es-terminos">Términos de uso</a></li>
+            <li><a href="#es-cambios">Cambios a esta política</a></li>
+            <li><a href="#es-contacto">Contacto</a></li>
+          </ol>
+        </div>
+
+        <section id="es-intro">
+          <h2>1. Introducción</h2>
+          <p>
+            Bienvenido a <strong>TicTacPartyPack</strong>, un juego de fiesta
+            para grupos que se juega en un único dispositivo. Esta política
+            describe qué información se maneja dentro de la aplicación y bajo
+            qué condiciones puedes usarla.
+          </p>
+          <p>
+            Al descargar o usar la aplicación aceptas los términos descritos en
+            este documento. Si no estás de acuerdo, te pedimos que no instales
+            ni uses la aplicación.
+          </p>
+          <p>
+            <strong>Fecha de vigencia:</strong> 11 de abril de 2026<br />
+            <strong>Versión de la app:</strong> 1.0.0<br />
+            <strong>Identificador:</strong> com.ivanr.tictacpartypack
+          </p>
+        </section>
+
+        <section id="es-datos">
+          <h2>2. Datos que recopilamos</h2>
+
+          <div class="highlight-box green">
+            <strong>Resumen:</strong> Sin anuncios activos, TicTacPartyPack no
+            recopila ni transmite ningún dato personal. Cuando los anuncios
+            están activos, las redes publicitarias recopilan ciertos datos del
+            dispositivo (ver sección 3). Con la compra «Sin anuncios», toda
+            recopilación de datos publicitarios cesa por completo.
+          </div>
+
+          <h3>2.1 Datos que <em>no</em> recopilamos</h3>
+          <ul>
+            <li>Nombre, correo electrónico ni ningún identificador personal</li>
+            <li>Datos de ubicación o GPS</li>
+            <li>Historial de partidas o puntuaciones</li>
+            <li>Información de contactos o redes sociales</li>
+            <li>
+              Datos de pago directos (los pagos se procesan íntegramente por
+              Google Play / App Store)
+            </li>
+          </ul>
+
+          <h3>2.2 Datos que se almacenan localmente</h3>
+          <p>
+            La aplicación guarda en el almacenamiento interno de tu dispositivo
+            (<em>AsyncStorage</em>) únicamente tus preferencias de
+            configuración:
+          </p>
+          <ul>
+            <li>
+              Rango de tiempo de la bomba (tiempo mínimo y máximo en segundos)
+            </li>
+            <li>Imagen de fondo seleccionada</li>
+            <li>Parámetros de los mini-juegos (máximos y mínimos)</li>
+          </ul>
+          <p>
+            Estos datos nunca salen de tu dispositivo y se pueden eliminar
+            desinstalando la aplicación.
+          </p>
+
+          <h3>2.3 Permisos del dispositivo</h3>
+          <p>La aplicación puede requerir los siguientes permisos:</p>
+          <ul>
+            <li>
+              <strong>Audio / Sonido:</strong> para reproducir los efectos de
+              sonido del juego (tic-tac y explosión). No se accede al micrófono.
+            </li>
+            <li>
+              <strong>Mantener pantalla encendida:</strong> para evitar que el
+              dispositivo se bloquee durante una partida activa.
+            </li>
+          </ul>
+        </section>
+
+        <section id="es-publicidad">
+          <h2>3. Publicidad <span class="badge">Próximamente</span></h2>
+          <p>
+            La aplicación incluirá anuncios de terceros para financiar su
+            desarrollo y mantenimiento. Esta funcionalidad está prevista para
+            una versión futura; la presente sección describe cómo operará
+            cuando esté activa.
+          </p>
+
+          <h3>3.1 Datos recopilados por las redes publicitarias</h3>
+          <p>
+            Los SDKs de publicidad integrados pueden recopilar automáticamente
+            los siguientes datos para mostrar anuncios relevantes y medir su
+            rendimiento:
+          </p>
+          <ul>
+            <li>
+              <strong>Identificador publicitario:</strong> IDFA (iOS) o GAID
+              (Android) — un identificador restablecible asignado por el sistema
+              operativo para personalizar anuncios sin revelar tu identidad real
+            </li>
+            <li>
+              <strong>Dirección IP:</strong> para determinar la región
+              geográfica aproximada y mostrar anuncios relevantes
+            </li>
+            <li>
+              <strong>Información del dispositivo:</strong> modelo, versión del
+              sistema operativo y configuración de pantalla
+            </li>
+            <li>
+              <strong>Datos de interacción:</strong> impresiones y clics en
+              anuncios, usados para medir el rendimiento de las campañas
+            </li>
+          </ul>
+
+          <h3>3.2 Redes publicitarias previstas</h3>
+          <p>
+            Se prevé la integración con una o más de las siguientes redes, cada
+            una sujeta a su propia política de privacidad:
+          </p>
+          <ul>
+            <li>Google AdMob</li>
+            <li>Meta Audience Network</li>
+            <li>Unity Ads</li>
+          </ul>
+
+          <h3>3.3 Control del usuario</h3>
+          <p>Puedes limitar la publicidad personalizada desde tu dispositivo:</p>
+          <ul>
+            <li>
+              <strong>Android:</strong> Ajustes → Google → Anuncios → Restablecer
+              ID publicitario / Inhabilitar personalización
+            </li>
+            <li>
+              <strong>iOS:</strong> Ajustes → Privacidad → Seguimiento →
+              desactiva «Permitir seguimiento»
+            </li>
+          </ul>
+          <p>
+            La opción definitiva es adquirir la versión sin anuncios (ver
+            sección 4), tras lo cual los SDKs publicitarios se desactivan por
+            completo y no se recopilan datos relacionados con publicidad.
+          </p>
+        </section>
+
+        <section id="es-compras">
+          <h2>4. Compras en la aplicación <span class="badge">Próximamente</span></h2>
+          <p>
+            Ofrecemos una compra única opcional que elimina todos los anuncios
+            de la aplicación de forma permanente.
+          </p>
+
+          <h3>4.1 Qué incluye la compra</h3>
+          <ul>
+            <li>Eliminación completa de todos los anuncios</li>
+            <li>
+              Desactivación de los SDKs publicitarios y cese de la recopilación
+              de datos asociada
+            </li>
+            <li>
+              La compra es permanente: no hay suscripciones ni cargos
+              recurrentes
+            </li>
+            <li>
+              Puede restaurarse en cualquier dispositivo vinculado a tu cuenta
+              de tienda
+            </li>
+          </ul>
+
+          <h3>4.2 Procesamiento del pago</h3>
+          <p>
+            Todos los pagos se procesan íntegramente a través de la plataforma
+            de distribución correspondiente (Google Play o App Store). Nosotros
+            <strong>no recibimos, almacenamos ni procesamos</strong> ningún dato
+            de tarjeta de crédito, débito u otro método de pago.
+          </p>
+          <p>
+            El registro de la compra se almacena de forma segura en tu cuenta
+            de Google Play o Apple ID y se sincroniza automáticamente con la
+            aplicación.
+          </p>
+
+          <h3>4.3 Reembolsos</h3>
+          <p>
+            Las solicitudes de reembolso se gestionan conforme a la política de
+            la tienda donde se realizó la compra:
+          </p>
+          <ul>
+            <li>
+              <strong>Google Play:</strong> dentro de las primeras 48 horas
+              desde la compra, a través de Google Play → Historial de pedidos
+            </li>
+            <li>
+              <strong>App Store:</strong> a través de Apple → Reportar un cargo
+            </li>
+          </ul>
+        </section>
+
+        <section id="es-terceros">
+          <h2>5. Servicios de terceros</h2>
+          <p>
+            Además de los servicios descritos en las secciones 3 y 4
+            (publicidad y compras), la aplicación no integra otras plataformas
+            de análisis, servicios de autenticación ni sistemas de telemetría
+            propios.
+          </p>
+          <p>
+            La aplicación se distribuye a través de las tiendas oficiales
+            (Google Play / App Store). Dichas plataformas pueden recopilar datos
+            de uso de forma independiente conforme a sus propias políticas de
+            privacidad, sobre las cuales no tenemos control.
+          </p>
+        </section>
+
+        <section id="es-menores">
+          <h2>6. Menores de edad</h2>
+          <p>
+            TicTacPartyPack es un juego de entretenimiento familiar apto para
+            todas las edades en cuanto a la gestión de datos: no recopilamos
+            información de ningún usuario, independientemente de su edad.
+          </p>
+          <p>
+            No está dirigido intencionalmente a menores de 13 años como público
+            objetivo exclusivo, y no recopila, almacena ni transmite datos de
+            identificación personal de ningún jugador.
+          </p>
+        </section>
+
+        <section id="es-seguridad">
+          <h2>7. Seguridad</h2>
+          <p>
+            Las preferencias de configuración almacenadas localmente están
+            sujetas a los mecanismos de seguridad estándar del sistema operativo
+            de tu dispositivo. Los datos transmitidos por las redes publicitarias
+            (cuando están activas) viajan cifrados mediante HTTPS; no obstante,
+            ningún sistema de transmisión es 100&nbsp;% seguro.
+          </p>
+        </section>
+
+        <section id="es-terminos">
+          <h2>8. Términos de uso</h2>
+
+          <h3>8.1 Licencia de uso</h3>
+          <p>
+            Se te concede una licencia personal, no exclusiva, no transferible y
+            revocable para instalar y usar la aplicación en dispositivos de tu
+            propiedad o bajo tu control, únicamente con fines de entretenimiento
+            personal y no comercial.
+          </p>
+
+          <h3>8.2 Restricciones</h3>
+          <p>Queda prohibido:</p>
+          <ul>
+            <li>
+              Copiar, modificar, distribuir o crear obras derivadas de la
+              aplicación sin autorización expresa
+            </li>
+            <li>
+              Realizar ingeniería inversa, descompilar o desensamblar el código
+              de la aplicación
+            </li>
+            <li>
+              Usar la aplicación con fines comerciales, publicitarios o de lucro
+            </li>
+            <li>
+              Eliminar o alterar los avisos de propiedad intelectual presentes
+              en la aplicación
+            </li>
+          </ul>
+
+          <h3>8.3 Propiedad intelectual</h3>
+          <p>
+            Todos los derechos sobre la aplicación, incluyendo su código, diseño
+            gráfico, sonidos, textos e identidad visual, son propiedad de sus
+            creadores. Quedan reservados todos los derechos no concedidos
+            expresamente en esta licencia.
+          </p>
+
+          <h3>8.4 Exención de responsabilidad</h3>
+          <p>
+            La aplicación se proporciona <strong>"tal cual"</strong>, sin
+            garantías de ningún tipo. No nos hacemos responsables de:
+          </p>
+          <ul>
+            <li>
+              Daños directos o indirectos derivados del uso o la imposibilidad
+              de uso de la aplicación
+            </li>
+            <li>
+              Incompatibilidades con versiones específicas de hardware o sistema
+              operativo
+            </li>
+            <li>
+              Pérdida de datos de configuración por desinstalación,
+              restablecimiento de fábrica u otras causas
+            </li>
+          </ul>
+
+          <h3>8.5 Disponibilidad</h3>
+          <p>
+            Nos reservamos el derecho de modificar, suspender o descontinuar la
+            aplicación en cualquier momento sin previo aviso, incluyendo la
+            retirada de actualizaciones o soporte.
+          </p>
+        </section>
+
+        <section id="es-cambios">
+          <h2>9. Cambios a esta política</h2>
+          <p>
+            Podemos actualizar esta Política de Privacidad y Términos de Uso
+            ocasionalmente. Los cambios se publicarán en esta página con una
+            nueva fecha de vigencia. Te recomendamos revisarla periódicamente.
+          </p>
+          <p>
+            El uso continuado de la aplicación tras la publicación de cambios
+            implica la aceptación de la política actualizada.
+          </p>
+        </section>
+
+        <section id="es-contacto">
+          <h2>10. Contacto</h2>
+          <p>
+            Si tienes preguntas o comentarios sobre esta política, puedes
+            contactarnos a través del repositorio oficial del proyecto o por los
+            canales de soporte disponibles en la tienda de aplicaciones donde
+            descargaste TicTacPartyPack.
+          </p>
+        </section>
+      </div>
+      <!-- ===================== END ESPAÑOL ===================== -->
+
+      <div class="divider"></div>
+
+      <!-- ===================== ENGLISH ===================== -->
+      <div data-lang="en">
+        <div class="toc">
+          <h2>Contents</h2>
+          <ol>
+            <li><a href="#en-intro">Introduction</a></li>
+            <li><a href="#en-data">Data we collect</a></li>
+            <li><a href="#en-advertising">Advertising</a></li>
+            <li><a href="#en-purchases">In-app purchases</a></li>
+            <li><a href="#en-third">Third-party services</a></li>
+            <li><a href="#en-children">Children</a></li>
+            <li><a href="#en-security">Security</a></li>
+            <li><a href="#en-terms">Terms of use</a></li>
+            <li><a href="#en-changes">Changes to this policy</a></li>
+            <li><a href="#en-contact">Contact</a></li>
+          </ol>
+        </div>
+
+        <section id="en-intro">
+          <h2>1. Introduction</h2>
+          <p>
+            Welcome to <strong>TicTacPartyPack</strong>, a party game for groups
+            played on a single device. This policy describes what information is
+            handled within the application and the conditions under which you may
+            use it.
+          </p>
+          <p>
+            By downloading or using the application you accept the terms
+            described in this document. If you disagree, please do not install
+            or use the app.
+          </p>
+          <p>
+            <strong>Effective date:</strong> April 11, 2026<br />
+            <strong>App version:</strong> 1.0.0<br />
+            <strong>Package ID:</strong> com.ivanr.tictacpartypack
+          </p>
+        </section>
+
+        <section id="en-data">
+          <h2>2. Data we collect</h2>
+
+          <div class="highlight-box green">
+            <strong>Summary:</strong> Without active ads, TicTacPartyPack does
+            not collect or transmit any personal data. When ads are active,
+            advertising networks collect certain device data (see section 3).
+            With the "Remove Ads" purchase, all ad-related data collection
+            stops completely.
+          </div>
+
+          <h3>2.1 Data we do <em>not</em> collect</h3>
+          <ul>
+            <li>Name, email, or any personal identifier</li>
+            <li>Location or GPS data</li>
+            <li>Game history or scores</li>
+            <li>Contact list or social network data</li>
+            <li>
+              Direct payment data (payments are processed entirely by Google
+              Play / App Store)
+            </li>
+          </ul>
+
+          <h3>2.2 Data stored locally</h3>
+          <p>
+            The application saves only your configuration preferences to your
+            device's internal storage (<em>AsyncStorage</em>):
+          </p>
+          <ul>
+            <li>Bomb timer range (minimum and maximum seconds)</li>
+            <li>Selected background image</li>
+            <li>Mini-game parameters (maximums and minimums)</li>
+          </ul>
+          <p>
+            This data never leaves your device and can be erased by
+            uninstalling the application.
+          </p>
+
+          <h3>2.3 Device permissions</h3>
+          <p>The application may require the following permissions:</p>
+          <ul>
+            <li>
+              <strong>Audio / Sound:</strong> to play in-game sound effects
+              (tick and explosion). The microphone is never accessed.
+            </li>
+            <li>
+              <strong>Keep screen awake:</strong> to prevent the device from
+              locking during an active game round.
+            </li>
+          </ul>
+        </section>
+
+        <section id="en-advertising">
+          <h2>3. Advertising <span class="badge">Coming soon</span></h2>
+          <p>
+            The application will include third-party ads to fund its development
+            and maintenance. This feature is planned for a future version; this
+            section describes how it will operate once active.
+          </p>
+
+          <h3>3.1 Data collected by advertising networks</h3>
+          <p>
+            Integrated advertising SDKs may automatically collect the following
+            data to display relevant ads and measure their performance:
+          </p>
+          <ul>
+            <li>
+              <strong>Advertising identifier:</strong> IDFA (iOS) or GAID
+              (Android) — a resettable identifier assigned by the OS to
+              personalize ads without revealing your real identity
+            </li>
+            <li>
+              <strong>IP address:</strong> to determine your approximate
+              geographic region and serve relevant ads
+            </li>
+            <li>
+              <strong>Device information:</strong> model, OS version, and screen
+              configuration
+            </li>
+            <li>
+              <strong>Interaction data:</strong> ad impressions and clicks, used
+              to measure campaign performance
+            </li>
+          </ul>
+
+          <h3>3.2 Planned advertising networks</h3>
+          <p>
+            Integration with one or more of the following networks is planned,
+            each subject to its own privacy policy:
+          </p>
+          <ul>
+            <li>Google AdMob</li>
+            <li>Meta Audience Network</li>
+            <li>Unity Ads</li>
+          </ul>
+
+          <h3>3.3 User controls</h3>
+          <p>You can limit personalized advertising from your device:</p>
+          <ul>
+            <li>
+              <strong>Android:</strong> Settings → Google → Ads → Reset
+              advertising ID / Opt out of personalization
+            </li>
+            <li>
+              <strong>iOS:</strong> Settings → Privacy → Tracking →
+              disable "Allow Tracking"
+            </li>
+          </ul>
+          <p>
+            The definitive option is to purchase the ad-free version (see
+            section 4), after which all advertising SDKs are fully disabled and
+            no ad-related data is collected.
+          </p>
+        </section>
+
+        <section id="en-purchases">
+          <h2>4. In-app purchases <span class="badge">Coming soon</span></h2>
+          <p>
+            We offer an optional one-time purchase that permanently removes all
+            ads from the application.
+          </p>
+
+          <h3>4.1 What the purchase includes</h3>
+          <ul>
+            <li>Complete removal of all advertisements</li>
+            <li>
+              Deactivation of advertising SDKs and cessation of associated data
+              collection
+            </li>
+            <li>
+              The purchase is permanent: no subscriptions or recurring charges
+            </li>
+            <li>
+              Can be restored on any device linked to your store account
+            </li>
+          </ul>
+
+          <h3>4.2 Payment processing</h3>
+          <p>
+            All payments are processed entirely through the relevant distribution
+            platform (Google Play or App Store). We
+            <strong>do not receive, store, or process</strong> any credit card,
+            debit card, or other payment data.
+          </p>
+          <p>
+            The purchase record is stored securely in your Google Play or Apple
+            ID account and automatically synced with the application.
+          </p>
+
+          <h3>4.3 Refunds</h3>
+          <p>
+            Refund requests are handled in accordance with the policy of the
+            store where the purchase was made:
+          </p>
+          <ul>
+            <li>
+              <strong>Google Play:</strong> within the first 48 hours of
+              purchase, via Google Play → Order history
+            </li>
+            <li>
+              <strong>App Store:</strong> by reporting a problem via Apple →
+              Report a charge
+            </li>
+          </ul>
+        </section>
+
+        <section id="en-third">
+          <h2>5. Third-party services</h2>
+          <p>
+            Beyond the services described in sections 3 and 4 (advertising and
+            purchases), the application does not integrate any other analytics
+            platforms, authentication services, or telemetry systems.
+          </p>
+          <p>
+            The application is distributed through official stores (Google Play
+            / App Store). These platforms may independently collect usage data
+            according to their own privacy policies, over which we have no
+            control.
+          </p>
+        </section>
+
+        <section id="en-children">
+          <h2>6. Children</h2>
+          <p>
+            TicTacPartyPack is a family-friendly entertainment game that is safe
+            for all ages from a data-handling perspective: we do not collect
+            information from any user regardless of age.
+          </p>
+          <p>
+            The app is not intentionally targeted exclusively at children under
+            13, and it does not collect, store, or transmit any personally
+            identifiable information from any player.
+          </p>
+        </section>
+
+        <section id="en-security">
+          <h2>7. Security</h2>
+          <p>
+            Locally stored configuration preferences are protected by the
+            standard security mechanisms of your device's operating system.
+            Data transmitted by advertising networks (when active) travels
+            encrypted over HTTPS; however, no transmission system is 100%
+            secure.
+          </p>
+        </section>
+
+        <section id="en-terms">
+          <h2>8. Terms of use</h2>
+
+          <h3>8.1 License</h3>
+          <p>
+            You are granted a personal, non-exclusive, non-transferable, and
+            revocable license to install and use the application on devices you
+            own or control, solely for personal, non-commercial entertainment
+            purposes.
+          </p>
+
+          <h3>8.2 Restrictions</h3>
+          <p>The following are prohibited:</p>
+          <ul>
+            <li>
+              Copying, modifying, distributing, or creating derivative works of
+              the application without express authorization
+            </li>
+            <li>
+              Reverse-engineering, decompiling, or disassembling the
+              application's code
+            </li>
+            <li>
+              Using the application for commercial, advertising, or profit-making
+              purposes
+            </li>
+            <li>
+              Removing or altering intellectual property notices in the
+              application
+            </li>
+          </ul>
+
+          <h3>8.3 Intellectual property</h3>
+          <p>
+            All rights to the application, including its code, graphic design,
+            sounds, text, and visual identity, are the property of its creators.
+            All rights not expressly granted in this license are reserved.
+          </p>
+
+          <h3>8.4 Disclaimer of warranties</h3>
+          <p>
+            The application is provided <strong>"as is"</strong>, without
+            warranties of any kind. We are not liable for:
+          </p>
+          <ul>
+            <li>
+              Direct or indirect damages arising from the use or inability to
+              use the application
+            </li>
+            <li>
+              Incompatibilities with specific hardware or operating system
+              versions
+            </li>
+            <li>
+              Loss of configuration data due to uninstallation, factory reset,
+              or other causes
+            </li>
+          </ul>
+
+          <h3>8.5 Availability</h3>
+          <p>
+            We reserve the right to modify, suspend, or discontinue the
+            application at any time without prior notice, including withdrawing
+            updates or support.
+          </p>
+        </section>
+
+        <section id="en-changes">
+          <h2>9. Changes to this policy</h2>
+          <p>
+            We may update this Privacy Policy and Terms of Use from time to
+            time. Changes will be published on this page with a new effective
+            date. We recommend reviewing it periodically.
+          </p>
+          <p>
+            Continued use of the application after changes are published
+            constitutes acceptance of the updated policy.
+          </p>
+        </section>
+
+        <section id="en-contact">
+          <h2>10. Contact</h2>
+          <p>
+            If you have questions or comments about this policy, you can reach
+            us through the official project repository or via the support
+            channels available in the app store where you downloaded
+            TicTacPartyPack.
+          </p>
+        </section>
+      </div>
+      <!-- ===================== END ENGLISH ===================== -->
+    </main>
+
+    <footer>
+      <p>
+        &copy; 2026 TicTacPartyPack &mdash;
+        <span data-lang="es">Todos los derechos reservados</span>
+        <span data-lang="en">All rights reserved</span>
+      </p>
+    </footer>
+
+    <script>
+      function setLang(lang) {
+        document.body.classList.remove("lang-es", "lang-en");
+        document.body.classList.add("lang-" + lang);
+        document
+          .querySelectorAll(".lang-btn")
+          .forEach(function (btn) {
+            btn.classList.toggle("active", btn.dataset.target === lang);
+          });
+        document.documentElement.lang = lang;
+      }
+
+      // Init: URL param takes priority (?lang=en / ?lang=es), then browser language
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var forced = params.get("lang");
+        if (forced === "en" || forced === "es") {
+          setLang(forced);
+        } else {
+          var preferred = navigator.language || "es";
+          var lang = preferred.startsWith("en") ? "en" : "es";
+          if (lang === "en") setLang("en");
+        }
+      })();
+    </script>
+  </body>
+</html>
