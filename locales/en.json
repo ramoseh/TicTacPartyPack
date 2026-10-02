@@ -15,6 +15,11 @@
     "languages": {
       "en": "English",
       "es": "Spanish"
+    },
+    "background": "Background",
+    "backgrounds": {
+      "default": "Starry night",
+      "city": "City"
     }
   },
   "config": {
@@ -48,7 +53,7 @@
     "game_settings": "Specific Game Settings"
   },
   "game": {
-    "back": "← Exit",
+    "back": "Exit",
     "start_instruction": "Tap Start",
     "how_to_play": "How To Play",
     "close_instructions": "Got it!",

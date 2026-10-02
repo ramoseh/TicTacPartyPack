@@ -1,36 +1,18 @@
 import React, { useState } from 'react';
-import { View, Text, Pressable, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
-import { router } from 'expo-router';
+import { View, Pressable, ScrollView, SafeAreaView, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { GameType } from '../../services/gameRouter';
-
-// Reusable Switch Component
-const Switch = ({
-  value,
-  onValueChange,
-}: {
-  value: boolean;
-  onValueChange: (val: boolean) => void;
-}) => (
-  <TouchableOpacity
-    onPress={() => onValueChange(!value)}
-    className={`w-14 h-8 rounded-full px-1 flex-row items-center ${value ? 'bg-blue-500 justify-end' : 'bg-gray-300 justify-start'}`}
-  >
-    <View
-      className="w-6 h-6 rounded-full bg-white"
-      style={{
-        elevation: 1,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 1,
-      }}
-    />
-  </TouchableOpacity>
-);
+import { PixelButton } from '../../components/pixel/PixelButton';
+import { PixelIcon } from '../../components/pixel/PixelIcon';
+import { PixelPanel } from '../../components/pixel/PixelPanel';
+import { PixelText } from '../../components/pixel/PixelText';
+import { PixelToggle } from '../../components/pixel/PixelToggle';
+import { usePixelNavigation } from '../../hooks/usePixelNavigation';
+import { palette, PIXEL_UNIT } from '../../theme/pixel';
 
 export default function GameConfig() {
   const { t } = useTranslation();
+  const navigation = usePixelNavigation();
   const [mode, setMode] = useState<'classic' | 'custom' | 'simple'>('classic');
   const [selectedGames, setSelectedGames] = useState<GameType[]>(Object.values(GameType));
 
@@ -57,84 +39,64 @@ export default function GameConfig() {
       params.allowedTypes = selectedGames.join(',');
     }
 
-    router.push({
+    navigation.push({
       pathname: '/game',
       params,
     });
   };
 
   return (
-    <SafeAreaView className="flex-1 px-3" style={{ paddingVertical: 50 }}>
-      <View
-        className="flex-1 p-4 bg-slate-800/90 rounded-2xl border border-slate-700/50"
-        style={{
-          elevation: 5,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-        }}
-      >
-        <Text className="text-2xl font-black text-center mb-4 text-white">{t('config.title')}</Text>
+    <SafeAreaView style={styles.safeArea}>
+      <PixelPanel style={styles.panel}>
+        <PixelText variant="title" style={styles.title}>
+          {t('config.title')}
+        </PixelText>
 
-        <View className="flex-row justify-between mb-4 bg-slate-900/50 p-1 rounded-xl">
+        <View style={styles.tabs}>
           {(['classic', 'custom', 'simple'] as const).map(m => (
-            <TouchableOpacity
+            <Pressable
               key={m}
               onPress={() => setMode(m)}
-              className={`flex-1 py-2.5 items-center rounded-lg ${mode === m ? 'bg-slate-700' : ''}`}
-              style={
-                mode === m
-                  ? {
-                      shadowColor: '#000',
-                      shadowOffset: { width: 0, height: 1 },
-                      shadowOpacity: 0.1,
-                      shadowRadius: 2,
-                    }
-                  : undefined
-              }
+              style={[styles.tab, mode === m && styles.tabActive]}
               accessibilityRole="tab"
               accessibilityLabel={t(`config.modes.${m}`)}
               accessibilityState={{ selected: mode === m }}
             >
-              <Text className={`font-bold ${mode === m ? 'text-blue-400' : 'text-gray-500'}`}>
+              <PixelText
+                variant="heading"
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                style={[styles.tabLabel, mode === m && styles.tabLabelActive]}
+              >
                 {t(`config.modes.${m}`)}
-              </Text>
-            </TouchableOpacity>
+              </PixelText>
+            </Pressable>
           ))}
         </View>
 
         {mode === 'classic' && (
-          <View className="flex-1 justify-center items-center p-4">
-            <Text className="text-6xl mb-4" style={{ lineHeight: 80, paddingVertical: 10 }}>
-              🎲
-            </Text>
-            <Text className="text-xl text-center text-gray-300 font-medium">
-              {t('config.descriptions.classic')}
-            </Text>
+          <View style={styles.centered}>
+            <PixelIcon name="dice" size={96} />
+            <PixelText style={styles.description}>{t('config.descriptions.classic')}</PixelText>
           </View>
         )}
 
         {mode === 'simple' && (
-          <View className="flex-1 p-4">
-            <View className="items-center mb-6">
-              <Text className="text-6xl mb-12" style={{ lineHeight: 80, paddingVertical: 10 }}>
-                💣
-              </Text>
-              <Text className="text-xl text-center text-gray-300 font-medium">
-                {t('config.descriptions.simple')}
-              </Text>
+          <View style={styles.fill}>
+            <View style={styles.simpleHeader}>
+              <PixelIcon name="bomb" size={96} />
+              <PixelText style={styles.description}>{t('config.descriptions.simple')}</PixelText>
             </View>
 
-            <View className="bg-orange-900/20 p-4 rounded-2xl border border-orange-500/30">
-              <Text className="font-bold text-orange-400 mb-3 text-lg">
+            <View style={styles.ideas}>
+              <PixelText variant="heading" style={styles.ideasTitle}>
                 {t('config.simple_ideas.title')}
-              </Text>
+              </PixelText>
               {(t('config.simple_ideas.list', { returnObjects: true }) as string[]).map(
                 (idea, index) => (
-                  <View key={index} className="flex-row mb-2 items-start">
-                    <Text className="text-orange-500/80 mr-2">•</Text>
-                    <Text className="text-orange-200/90 flex-1">{idea}</Text>
+                  <View key={index} style={styles.ideaRow}>
+                    <View style={styles.bullet} />
+                    <PixelText style={styles.ideaText}>{idea}</PixelText>
                   </View>
                 )
               )}
@@ -143,61 +105,118 @@ export default function GameConfig() {
         )}
 
         {mode === 'custom' && (
-          <ScrollView className="flex-1 mb-4" showsVerticalScrollIndicator={false}>
-            <Text className="text-gray-400 mb-4 font-medium uppercase tracking-widest text-sm">
+          <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
+            <PixelText variant="caption" style={styles.sectionLabel}>
               {t('config.select_games')}
-            </Text>
+            </PixelText>
             {gameTypes.map(type => (
               <Pressable
                 key={type}
                 onPress={() => toggleGame(type)}
-                className="flex-row items-center justify-between p-4 mb-3 bg-slate-700/40 rounded-xl border border-slate-600/50 active:opacity-70"
+                style={styles.gameRow}
                 accessibilityRole="switch"
                 accessibilityLabel={t(`instructions.${type}.title`)}
                 accessibilityState={{ checked: selectedGames.includes(type) }}
               >
-                <Text className="font-bold text-gray-200 text-lg">
-                  {t(`instructions.${type}.title`)}
-                </Text>
-                <Switch
+                <PixelText style={styles.gameLabel}>{t(`instructions.${type}.title`)}</PixelText>
+                <PixelToggle
                   value={selectedGames.includes(type)}
                   onValueChange={() => toggleGame(type)}
+                  accessibilityLabel={t(`instructions.${type}.title`)}
                 />
               </Pressable>
             ))}
           </ScrollView>
         )}
 
-        <Pressable
+        <PixelButton
+          label={
+            mode === 'custom' && selectedGames.length === 0
+              ? t('config.select_at_least_one')
+              : t('game.actions.start')
+          }
           onPress={startGame}
           disabled={!canStart}
-          className={`py-3 rounded-xl items-center mt-2 ${canStart ? 'bg-blue-600 active:bg-blue-700' : 'bg-blue-600/40'}`}
-          style={{
-            elevation: canStart ? 5 : 0,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.2,
-            shadowRadius: 5,
-          }}
-        >
-          <Text
-            className={`text-xl font-black tracking-widest uppercase ${canStart ? 'text-white' : 'text-white/40'}`}
-          >
-            {mode === 'custom' && selectedGames.length === 0
-              ? t('config.select_at_least_one')
-              : t('game.actions.start')}
-          </Text>
-        </Pressable>
+          size="lg"
+          style={styles.startButton}
+        />
 
-        <Pressable
-          onPress={() => router.back()}
-          className="mt-3 items-center"
-          accessibilityRole="button"
-          accessibilityLabel={t('game.back')}
-        >
-          <Text className="text-gray-400 font-bold">{t('game.back')}</Text>
-        </Pressable>
-      </View>
+        <PixelButton
+          label={t('game.back')}
+          variant="ghost"
+          onPress={navigation.back}
+          style={styles.backButton}
+        />
+      </PixelPanel>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  safeArea: { flex: 1, paddingHorizontal: PIXEL_UNIT * 3, paddingVertical: PIXEL_UNIT * 12 },
+  panel: { flex: 1, padding: PIXEL_UNIT * 4 },
+  fill: { flex: 1 },
+  title: {
+    color: palette.yellow,
+    fontSize: 16,
+    lineHeight: 24,
+    textAlign: 'center',
+    marginBottom: PIXEL_UNIT * 4,
+  },
+  tabs: {
+    flexDirection: 'row',
+    backgroundColor: palette.ink,
+    padding: PIXEL_UNIT,
+    marginBottom: PIXEL_UNIT * 4,
+    gap: PIXEL_UNIT,
+  },
+  tab: { flex: 1, alignItems: 'center', paddingVertical: PIXEL_UNIT * 3 },
+  tabActive: { backgroundColor: palette.slate },
+  tabLabel: { color: palette.steel, fontSize: 10, lineHeight: 14 },
+  tabLabelActive: { color: palette.yellow },
+  centered: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: PIXEL_UNIT * 4 },
+  simpleHeader: { alignItems: 'center', marginVertical: PIXEL_UNIT * 4 },
+  description: {
+    color: palette.gray,
+    fontSize: 20,
+    lineHeight: 28,
+    textAlign: 'center',
+    marginTop: PIXEL_UNIT * 4,
+  },
+  ideas: {
+    backgroundColor: palette.ink,
+    borderWidth: PIXEL_UNIT,
+    borderColor: palette.orange,
+    padding: PIXEL_UNIT * 4,
+  },
+  ideasTitle: { color: palette.orange, fontSize: 12, lineHeight: 18, marginBottom: PIXEL_UNIT * 3 },
+  ideaRow: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: PIXEL_UNIT * 2 },
+  bullet: {
+    width: PIXEL_UNIT * 2,
+    height: PIXEL_UNIT * 2,
+    backgroundColor: palette.orange,
+    marginTop: PIXEL_UNIT * 2,
+    marginRight: PIXEL_UNIT * 2,
+  },
+  ideaText: { flex: 1, color: palette.paper, fontSize: 18, lineHeight: 24 },
+  list: { flex: 1, marginBottom: PIXEL_UNIT * 4 },
+  sectionLabel: {
+    color: palette.fog,
+    fontSize: 16,
+    textTransform: 'uppercase',
+    marginBottom: PIXEL_UNIT * 4,
+  },
+  gameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: PIXEL_UNIT * 3,
+    marginBottom: PIXEL_UNIT * 3,
+    backgroundColor: palette.slate,
+    borderBottomWidth: PIXEL_UNIT,
+    borderBottomColor: palette.black,
+  },
+  gameLabel: { flex: 1, color: palette.paper, fontSize: 20, marginRight: PIXEL_UNIT * 3 },
+  startButton: { marginTop: PIXEL_UNIT * 2 },
+  backButton: { marginTop: PIXEL_UNIT * 3 },
+});

@@ -2,6 +2,10 @@ node_modules/
 .expo/
 .git/
 coverage/
+dist/
+build/
+.specify/
+.github/skills/
 *.log
 package-lock.json
 yarn.lock

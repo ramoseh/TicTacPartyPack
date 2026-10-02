@@ -16,7 +16,7 @@ npm run web
 
 All start commands use `node -r ./polyfill.js` to load array polyfills (`toReversed`, `toSorted`, `toSpliced`, `with`) required by the React 19 / React Native environment before starting Expo.
 
-There is no test suite configured in this project.
+Tests use Jest (`jest-expo`) and live in `__tests__/`; run `npm test`. `npm run validate` runs typecheck, lint and format check.
 
 ## Architecture
 
@@ -59,6 +59,15 @@ Consume with the `useSettings()` hook.
 NativeWind v4 is used for Tailwind-based styling in React Native. Tailwind classes are applied via `className` props. The `tailwind.config.js` scans `app/**` and `components/**`. The global CSS entry is `global.css`, imported in `_layout.tsx`.
 
 When mixing Tailwind classes with dynamic inline styles, use `style={{}}` for values that can't be expressed as static class names (e.g. computed colors, opacity values).
+
+### Pixel-art UI & animation
+
+- **Theme** (`theme/pixel.ts`): 16-color `palette` (mirrored as `px-*` colors in `tailwind.config.js`, kept in sync by `__tests__/theme.test.ts`), `PIXEL_UNIT = 4` dp (every border/shadow/offset is a multiple), `fonts` (Press Start 2P for titles, Pixelify Sans for body) and `timings`.
+- **Kit** (`components/pixel/`): `PixelText`, `PixelButton`, `PixelPanel`, `PixelToggle`, `PixelIcon`, `PixelSprite`, `PixelTransitionOverlay`. Use these instead of rounded corners, blurred shadows, emojis or vector icons.
+- **Animations** use RN `Animated` with the native driver (`useNativeDriver: Platform.OS !== 'web'`) and always step: sprites are frame-indexed via `useSpriteClip` + `buildFrameInterpolation`; UI motion uses `stepsEasing(n)` (`theme/animation.ts`). Stop animations in effect cleanups.
+- **Reduced motion**: every animated component must check `useReducedMotion()` and fall back to a static key frame.
+- **Navigation**: the `Stack` uses `animation: 'none'`; navigate with `usePixelNavigation()` (`push`/`replace`/`back`) so the block transition plays.
+- **Art pipeline**: 1x pixel art is generated from code by `scripts/generate-pixel-art.js` into `assets/pixel-src/export/`, then `scripts/build-sprites.js` upscales it with nearest-neighbor into `assets/sprites`, `assets/icons` and `assets/backgrounds` (max 2048 px). Run `npm run art` (both) or `npm run sprites` (upscale only, e.g. after replacing exports with hand-made art). Register sheets/clips/icons in `theme/sprites.ts` and backgrounds in `theme/backgrounds.ts`. Third-party assets go in `assets/LICENSES.md`.
 
 ### Internationalization (`i18n.ts`, `locales/`)
 

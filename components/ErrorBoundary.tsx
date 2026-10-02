@@ -1,5 +1,9 @@
 import React from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { PixelButton } from './pixel/PixelButton';
+import { PixelIcon } from './pixel/PixelIcon';
+import { PixelText } from './pixel/PixelText';
+import { palette, PIXEL_UNIT } from '../theme/pixel';
 
 interface Props {
   children: React.ReactNode;
@@ -28,20 +32,15 @@ export default class ErrorBoundary extends React.Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <View className="flex-1 items-center justify-center bg-gray-900 px-8">
-          <Text className="text-5xl mb-6">💥</Text>
-          <Text className="text-white text-2xl font-black mb-2 text-center">Algo salió mal</Text>
-          <Text className="text-gray-400 text-sm text-center mb-8">
+        <View style={styles.container}>
+          <PixelIcon name="boom" size={80} />
+          <PixelText variant="title" style={styles.title}>
+            Algo salió mal
+          </PixelText>
+          <PixelText style={styles.message}>
             {this.state.error?.message ?? 'Error inesperado'}
-          </Text>
-          <Pressable
-            onPress={this.handleReset}
-            className="bg-blue-600 py-4 px-8 rounded-2xl active:bg-blue-700"
-            accessibilityRole="button"
-            accessibilityLabel="Reintentar"
-          >
-            <Text className="text-white font-bold text-lg">Reintentar</Text>
-          </Pressable>
+          </PixelText>
+          <PixelButton label="Reintentar" onPress={this.handleReset} />
         </View>
       );
     }
@@ -49,3 +48,27 @@ export default class ErrorBoundary extends React.Component<Props, State> {
     return this.props.children;
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: palette.ink,
+    paddingHorizontal: PIXEL_UNIT * 8,
+  },
+  title: {
+    color: palette.white,
+    fontSize: 18,
+    lineHeight: 28,
+    textAlign: 'center',
+    marginTop: PIXEL_UNIT * 6,
+    marginBottom: PIXEL_UNIT * 2,
+  },
+  message: {
+    color: palette.fog,
+    fontSize: 16,
+    textAlign: 'center',
+    marginBottom: PIXEL_UNIT * 8,
+  },
+});

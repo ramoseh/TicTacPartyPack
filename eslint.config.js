@@ -10,6 +10,8 @@ module.exports = [
     ignores: [
       'node_modules/**',
       '.expo/**',
+      'dist/**',
+      'coverage/**',
       'babel.config.js',
       'metro.config.js',
       'tailwind.config.js',

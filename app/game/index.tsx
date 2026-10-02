@@ -1,20 +1,36 @@
-import { View, Text, Pressable } from 'react-native';
-import { router, useLocalSearchParams } from 'expo-router';
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { View, Pressable, Animated, Easing, Platform, StyleSheet } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Feather } from '@expo/vector-icons';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
 import Bomb from '../../components/Bomb';
 import ChallengeDisplay from '../../components/ChallengeDisplay';
 import GameInstructions from '../../components/GameInstructions';
+import { PixelButton } from '../../components/pixel/PixelButton';
+import { PixelIcon } from '../../components/pixel/PixelIcon';
+import { PixelText } from '../../components/pixel/PixelText';
 import { getRandomGame, GameChallenge, GameType } from '../../services/gameRouter';
 import { SoundManager } from '../../services/SoundManager';
+import { usePixelNavigation } from '../../hooks/usePixelNavigation';
 
 import { useSettings } from '../../store/SettingsContext';
+import { palette, PIXEL_UNIT, timings } from '../../theme/pixel';
+
+const SHAKE_OFFSETS = [2, -2, 1, -1, 1, 0].map(step => step * PIXEL_UNIT);
+const shakeInput = SHAKE_OFFSETS.flatMap((_, i) => [
+  i / SHAKE_OFFSETS.length,
+  (i + 1) / SHAKE_OFFSETS.length - 0.001,
+]);
+const shakeOutput = SHAKE_OFFSETS.flatMap(offset => [offset, offset]);
+const FLASH_OPACITY = 0.7;
+const FLASH_WINDOW = (timings.flashMs * timings.flashCount * 2) / timings.screenShakeMs;
+const flashInput = [0, 1, 1, 2, 2, 3, 3, 4].map(step => (step * FLASH_WINDOW) / 4);
+const flashOutput = [1, 1, 0, 0, 1, 1, 0, 0].map(on => on * FLASH_OPACITY);
 
 export default function Game() {
   const { t, i18n } = useTranslation();
+  const navigation = usePixelNavigation();
   const params = useLocalSearchParams();
   const { minTime, maxTime, guessMax, multiplyMin, multiplyMax, forbiddenLetterMax } =
     useSettings();
@@ -35,6 +51,37 @@ export default function Game() {
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const lastGameTypeRef = useRef<GameType | null>(null);
+  const impact = useRef(new Animated.Value(1)).current;
+
+  // Bomb only calls this when reduced motion is off.
+  const handleExplosionPeak = useCallback(() => {
+    impact.setValue(0);
+    Animated.timing(impact, {
+      toValue: 1,
+      duration: timings.screenShakeMs,
+      easing: Easing.linear,
+      useNativeDriver: Platform.OS !== 'web',
+    }).start();
+  }, [impact]);
+
+  const flashOpacity = useMemo(
+    () =>
+      impact.interpolate({
+        inputRange: flashInput,
+        outputRange: flashOutput,
+        extrapolate: 'clamp',
+      }),
+    [impact]
+  );
+  const shakeX = useMemo(
+    () =>
+      impact.interpolate({
+        inputRange: shakeInput,
+        outputRange: shakeOutput,
+        extrapolate: 'clamp',
+      }),
+    [impact]
+  );
 
   const allowedTypesKey = allowedTypes?.join(',') ?? '';
   const gameConfig = useMemo(
@@ -62,13 +109,11 @@ export default function Game() {
   }, []);
 
   useEffect(() => {
-    if (isActive) {
-      activateKeepAwakeAsync();
-    } else {
-      deactivateKeepAwake();
-    }
+    if (!isActive) return;
+    // Web rejects when the wake lock permission is denied or was never granted.
+    activateKeepAwakeAsync().catch(() => {});
     return () => {
-      deactivateKeepAwake();
+      deactivateKeepAwake().catch(() => {});
     };
   }, [isActive]);
 
@@ -115,183 +160,181 @@ export default function Game() {
 
   const handleBack = async () => {
     await SoundManager.stopTick();
-    router.back();
+    navigation.back();
   };
 
   return (
-    <View
-      className={`flex-1 items-center justify-center pb-32 ${isExploded ? 'bg-red-900/50' : ''}`}
+    <Animated.View
+      style={[styles.fill, { transform: [{ translateX: shakeX }, { translateY: shakeX }] }]}
     >
-      <View className="absolute top-16 left-6 z-10">
-        <Pressable
-          onPress={handleBack}
-          className="p-2 active:opacity-50"
-          accessibilityRole="button"
-          accessibilityLabel={t('game.back')}
-        >
-          <Feather name="arrow-left-circle" size={44} color="#a2abb6" />
-        </Pressable>
-      </View>
-
-      {/* Config/Instructions Button */}
-      {!isActive && !isSimpleMode && (
-        <View className="absolute top-16 right-6 z-10">
+      <View className="flex-1 items-center justify-center pb-32">
+        <View style={[styles.corner, styles.cornerLeft]}>
           <Pressable
-            onPress={() => setShowInstructions(true)}
-            className="p-2 active:opacity-50"
+            onPress={handleBack}
+            style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
             accessibilityRole="button"
-            accessibilityLabel={t('game.how_to_play')}
+            accessibilityLabel={t('game.back')}
           >
-            <Feather name="help-circle" size={44} color="#a2abb6" />
+            <PixelIcon name="back" size={40} />
           </Pressable>
         </View>
-      )}
 
-      {challenge && (
-        <View
-          style={{ backgroundColor: '#a2abb615' }}
-          className="px-4 py-1.5 rounded-full mb-8 border border-[#a2abb630]"
-        >
-          <Text
-            style={{ color: '#a2abb6' }}
-            className="font-bold uppercase tracking-widest text-[10px]"
-          >
-            {t(`instructions.${challenge.type}.title`)}
-          </Text>
-        </View>
-      )}
-
-      <Text
-        className={`text-5xl font-black mb-6 tracking-tighter ${isExploded ? 'text-red-600' : isActive ? 'text-gray-700' : 'text-gray-300'}`}
-      >
-        {isExploded
-          ? t('game.status.boom')
-          : isActive
-            ? t('game.status.quick')
-            : t('game.status.ready')}
-      </Text>
-
-      {isSimpleMode && (
-        <View className="bg-orange-500/10 px-4 py-1.5 rounded-full mb-8 border border-orange-200">
-          <Text className="text-orange-700 font-bold uppercase tracking-widest text-[10px]">
-            {t('config.modes.simple')}
-          </Text>
-        </View>
-      )}
-
-      <Bomb key={roundKey} isActive={isActive} isExploded={isExploded} />
-
-      <View className="min-h-[280px] justify-center items-center w-full">
-        {/* Show Challenge ONLY if NOT in Simple Mode */}
-        {(isActive || isExploded) && !isSimpleMode && challenge ? (
-          <View className="items-center">
-            <ChallengeDisplay
-              prompt={challenge.prompt}
-              instructionKey={challenge.instruction}
-              type={challenge.type}
-              isActive={isActive}
-              isExploded={isExploded}
-            />
-          </View>
-        ) : (isActive || isExploded) && isSimpleMode ? (
-          <View className="items-center">
-            <Text
-              className="text-gray-400 text-2xl font-black italic tracking-widest"
-              style={{ opacity: 0.3 }}
+        {/* Config/Instructions Button */}
+        {!isActive && !isSimpleMode && (
+          <View style={[styles.corner, styles.cornerRight]}>
+            <Pressable
+              onPress={() => setShowInstructions(true)}
+              style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
+              accessibilityRole="button"
+              accessibilityLabel={t('game.how_to_play')}
             >
-              TIC TAC...
-            </Text>
+              <PixelIcon name="help" size={40} />
+            </Pressable>
           </View>
-        ) : (
-          // Placeholder when waiting to start
-          <ChallengeDisplay isPlaceholder />
         )}
-      </View>
 
-      <View className="absolute bottom-12 w-full px-12 z-20">
-        {!isActive ? (
-          <View className="space-y-4 w-full">
-            {isExploded ? (
-              <Pressable
-                onPress={handleNewRound}
-                className="bg-orange-500 py-5 rounded-2xl items-center active:opacity-90 w-full"
-                style={{
-                  elevation: 5,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 5,
-                }}
-                accessibilityRole="button"
-                accessibilityLabel={t('game.actions.next')}
-              >
-                <Text className="text-white font-bold text-2xl uppercase tracking-wider">
-                  {t('game.actions.next')}
-                </Text>
-              </Pressable>
-            ) : (
-              <View>
-                <Pressable
-                  onPress={igniteBomb}
-                  className="bg-red-600 py-5 rounded-2xl items-center active:opacity-90 w-full mb-4"
-                  style={{
-                    elevation: 5,
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.2,
-                    shadowRadius: 5,
-                  }}
-                  accessibilityRole="button"
-                  accessibilityLabel={t('game.actions.start_bomb')}
-                >
-                  <Text className="text-white font-bold text-2xl uppercase tracking-wider">
-                    {t('game.actions.start_bomb')}
-                  </Text>
-                </Pressable>
-
-                <Pressable
-                  onPress={handleNewRound}
-                  style={{ backgroundColor: '#a2abb615', borderColor: '#a2abb630' }}
-                  className="py-5 rounded-2xl items-center border w-full active:opacity-70"
-                  accessibilityRole="button"
-                  accessibilityLabel={t('game.actions.new_round')}
-                >
-                  <Text
-                    style={{ color: '#a2abb6' }}
-                    className="font-bold text-lg uppercase tracking-wider"
-                  >
-                    {t('game.actions.new_round')}
-                  </Text>
-                </Pressable>
-              </View>
-            )}
+        {challenge && (
+          <View style={styles.badge}>
+            <PixelText variant="caption" style={styles.badgeText}>
+              {t(`instructions.${challenge.type}.title`)}
+            </PixelText>
           </View>
-        ) : (
-          <Pressable
-            onPress={handleExplosion}
-            className="bg-red-500/10 py-5 rounded-2xl items-center border-2 border-red-500/20 active:bg-red-500/20 w-full"
-            style={{ elevation: 0 }}
-            accessibilityRole="button"
-            accessibilityLabel={t('game.actions.simulate')}
-            accessibilityHint={t('game.actions.simulate_hint')}
-          >
-            <Text className="text-red-500 font-black text-lg uppercase tracking-[4px]">
-              {t('game.actions.simulate')}
-            </Text>
-          </Pressable>
         )}
-      </View>
 
-      {challenge && (
-        <GameInstructions
-          isVisible={showInstructions}
-          onClose={() => setShowInstructions(false)}
-          gameType={challenge.type}
-          guessMax={guessMax}
-          multiplyMin={multiplyMin}
-          multiplyMax={multiplyMax}
+        <PixelText
+          variant="title"
+          numberOfLines={1}
+          adjustsFontSizeToFit
+          style={[
+            styles.status,
+            isExploded ? styles.statusBoom : isActive ? styles.statusActive : styles.statusReady,
+          ]}
+        >
+          {isExploded
+            ? t('game.status.boom')
+            : isActive
+              ? t('game.status.quick')
+              : t('game.status.ready')}
+        </PixelText>
+
+        {isSimpleMode && (
+          <View style={[styles.badge, styles.badgeSimple]}>
+            <PixelText variant="caption" style={[styles.badgeText, styles.badgeSimpleText]}>
+              {t('config.modes.simple')}
+            </PixelText>
+          </View>
+        )}
+
+        <Bomb
+          key={roundKey}
+          isActive={isActive}
+          isExploded={isExploded}
+          onExplosionPeak={handleExplosionPeak}
         />
-      )}
-    </View>
+
+        <View className="min-h-[280px] justify-center items-center w-full">
+          {/* Show Challenge ONLY if NOT in Simple Mode */}
+          {(isActive || isExploded) && !isSimpleMode && challenge ? (
+            <View className="items-center">
+              <ChallengeDisplay
+                prompt={challenge.prompt}
+                instructionKey={challenge.instruction}
+                type={challenge.type}
+                isActive={isActive}
+                isExploded={isExploded}
+              />
+            </View>
+          ) : (isActive || isExploded) && isSimpleMode ? (
+            <View className="items-center">
+              <PixelText variant="title" blink={isActive} style={styles.ticTac}>
+                TIC TAC...
+              </PixelText>
+            </View>
+          ) : (
+            // Placeholder when waiting to start
+            <ChallengeDisplay isPlaceholder />
+          )}
+        </View>
+
+        <View className="absolute bottom-12 w-full px-12 z-20">
+          {!isActive ? (
+            isExploded ? (
+              <PixelButton
+                label={t('game.actions.next')}
+                variant="secondary"
+                size="lg"
+                onPress={handleNewRound}
+              />
+            ) : (
+              <View style={styles.buttonStack}>
+                <PixelButton
+                  label={t('game.actions.start_bomb')}
+                  variant="danger"
+                  size="lg"
+                  icon="bomb"
+                  onPress={igniteBomb}
+                />
+                <PixelButton
+                  label={t('game.actions.new_round')}
+                  variant="ghost"
+                  onPress={handleNewRound}
+                />
+              </View>
+            )
+          ) : (
+            <PixelButton
+              label={t('game.actions.simulate')}
+              variant="ghost"
+              accessibilityHint={t('game.actions.simulate_hint')}
+              onPress={handleExplosion}
+            />
+          )}
+        </View>
+
+        {challenge && (
+          <GameInstructions
+            isVisible={showInstructions}
+            onClose={() => setShowInstructions(false)}
+            gameType={challenge.type}
+            guessMax={guessMax}
+            multiplyMin={multiplyMin}
+            multiplyMax={multiplyMax}
+          />
+        )}
+      </View>
+      <Animated.View style={[StyleSheet.absoluteFill, styles.flash, { opacity: flashOpacity }]} />
+    </Animated.View>
   );
 }
+
+const styles = StyleSheet.create({
+  fill: { flex: 1 },
+  flash: { backgroundColor: palette.white, pointerEvents: 'none' },
+  corner: { position: 'absolute', top: PIXEL_UNIT * 16, zIndex: 10 },
+  cornerLeft: { left: PIXEL_UNIT * 6 },
+  cornerRight: { right: PIXEL_UNIT * 6 },
+  iconButton: { padding: PIXEL_UNIT * 2 },
+  iconPressed: { transform: [{ translateY: PIXEL_UNIT }] },
+  badge: {
+    backgroundColor: palette.ink,
+    borderWidth: PIXEL_UNIT / 2,
+    borderColor: palette.steel,
+    paddingHorizontal: PIXEL_UNIT * 3,
+    paddingVertical: PIXEL_UNIT,
+    marginBottom: PIXEL_UNIT * 6,
+  },
+  badgeText: { color: palette.fog, fontSize: 16, textTransform: 'uppercase' },
+  badgeSimple: { borderColor: palette.orange },
+  badgeSimpleText: { color: palette.orange },
+  status: {
+    fontSize: 28,
+    lineHeight: 40,
+    marginBottom: PIXEL_UNIT * 4,
+    paddingHorizontal: PIXEL_UNIT * 4,
+  },
+  statusBoom: { color: palette.red },
+  statusActive: { color: palette.yellow },
+  statusReady: { color: palette.fog },
+  ticTac: { color: palette.steel, fontSize: 20, lineHeight: 28 },
+  buttonStack: { gap: PIXEL_UNIT * 4 },
+});

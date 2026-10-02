@@ -16,7 +16,11 @@
       "en": "Inglés",
       "es": "Español"
     },
-    "background": "Fondo"
+    "background": "Fondo",
+    "backgrounds": {
+      "default": "Noche estrellada",
+      "city": "Ciudad"
+    }
   },
   "config": {
     "title": "Configurar Partida",
@@ -49,7 +53,7 @@
     "game_settings": "Ajustes específicos"
   },
   "game": {
-    "back": "← Salir",
+    "back": "Salir",
     "start_instruction": "Toca Comenzar",
     "how_to_play": "Cómo Jugar",
     "close_instructions": "Entendido",

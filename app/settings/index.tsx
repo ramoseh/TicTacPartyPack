@@ -1,11 +1,111 @@
-import { View, Text, Pressable, TextInput, ScrollView } from 'react-native';
-import { router } from 'expo-router';
+import { View, Pressable, TextInput, ScrollView, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { useSettings } from '../../store/SettingsContext';
+import { usePixelNavigation } from '../../hooks/usePixelNavigation';
+import { PixelButton } from '../../components/pixel/PixelButton';
+import { PixelIcon } from '../../components/pixel/PixelIcon';
+import { PixelPanel } from '../../components/pixel/PixelPanel';
+import { PixelText } from '../../components/pixel/PixelText';
+import { backgrounds, resolveBackground } from '../../theme/backgrounds';
+import { fonts, palette, PIXEL_UNIT } from '../../theme/pixel';
+
+interface SelectOption {
+  id: string;
+  label: string;
+}
+
+function PixelSelect({
+  label,
+  options,
+  selectedId,
+  isOpen,
+  onToggle,
+  onSelect,
+}: {
+  label: string;
+  options: SelectOption[];
+  selectedId: string;
+  isOpen: boolean;
+  onToggle: () => void;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <View style={styles.selectWrapper}>
+      <Pressable
+        onPress={onToggle}
+        style={({ pressed }) => [styles.selectField, pressed && styles.fieldPressed]}
+        accessibilityRole="combobox"
+        accessibilityLabel={label}
+        accessibilityState={{ expanded: isOpen }}
+      >
+        <PixelText style={styles.fieldText}>
+          {options.find(o => o.id === selectedId)?.label ?? options[0].label}
+        </PixelText>
+        <PixelText variant="heading" style={styles.caret}>
+          {isOpen ? '▲' : '▼'}
+        </PixelText>
+      </Pressable>
+
+      {isOpen && (
+        <View style={styles.menu}>
+          {options.map(option => {
+            const selected = option.id === selectedId;
+            return (
+              <Pressable
+                key={option.id}
+                onPress={() => onSelect(option.id)}
+                style={({ pressed }) => [
+                  styles.menuItem,
+                  selected && styles.menuItemSelected,
+                  pressed && styles.fieldPressed,
+                ]}
+                accessibilityRole="menuitem"
+                accessibilityLabel={option.label}
+                accessibilityState={{ selected }}
+              >
+                <PixelText style={[styles.fieldText, selected && styles.selectedText]}>
+                  {option.label}
+                </PixelText>
+                {selected && <PixelIcon name="check" size={24} />}
+              </Pressable>
+            );
+          })}
+        </View>
+      )}
+    </View>
+  );
+}
+
+function NumberField({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (text: string) => void;
+}) {
+  return (
+    <View style={styles.numberField}>
+      <PixelText variant="caption" style={styles.fieldLabel}>
+        {label}
+      </PixelText>
+      <TextInput
+        value={String(value)}
+        placeholderTextColor={palette.steel}
+        onChangeText={onChange}
+        keyboardType="numeric"
+        accessibilityLabel={label}
+        style={styles.input}
+      />
+    </View>
+  );
+}
 
 export default function Settings() {
   const { t, i18n } = useTranslation();
+  const navigation = usePixelNavigation();
   const {
     minTime,
     maxTime,
@@ -29,11 +129,14 @@ export default function Settings() {
   // Helper to normalize language code (e.g., 'es-MX' -> 'es')
   const currentLang = i18n.language.split('-')[0];
 
-  // Background options (move to config file in future)
-  const backgroundOptions = [
-    { id: 'default', label: 'Default' },
-    // Add more here later
+  const languageOptions = [
+    { id: 'es', label: t('settings.languages.es') },
+    { id: 'en', label: t('settings.languages.en') },
   ];
+  const backgroundOptions = backgrounds.map(option => ({
+    id: option.id,
+    label: t(option.labelKey),
+  }));
 
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
@@ -50,280 +153,173 @@ export default function Settings() {
 
   const handleSaveAndExit = async () => {
     await saveSettings();
-    router.back();
+    navigation.back();
   };
 
   return (
-    <View className="flex-1 px-6 pt-12">
-      <View className="items-center mb-6">
-        <Text className="text-3xl font-bold text-gray-100">{t('settings.title')}</Text>
-      </View>
+    <View style={styles.screen}>
+      <PixelText variant="title" style={styles.title}>
+        {t('settings.title')}
+      </PixelText>
 
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Language Section */}
-        <View
-          className="bg-slate-800/90 rounded-2xl p-6 z-20 mb-6 border border-slate-700/50"
-          style={{
-            elevation: 1,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 1,
-          }}
-        >
-          <Text className="text-gray-400 font-bold mb-3 uppercase text-xs tracking-wider">
+      <ScrollView style={styles.fill} showsVerticalScrollIndicator={false}>
+        <PixelPanel style={[styles.section, styles.sectionTop]}>
+          <PixelText variant="caption" style={styles.sectionLabel}>
             {t('settings.language')}
-          </Text>
+          </PixelText>
+          <PixelSelect
+            label={t('settings.language')}
+            options={languageOptions}
+            selectedId={currentLang}
+            isOpen={isDropdownOpen}
+            onToggle={() => setIsDropdownOpen(!isDropdownOpen)}
+            onSelect={changeLanguage}
+          />
+        </PixelPanel>
 
-          <View className="relative">
-            <Pressable
-              onPress={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex-row justify-between items-center bg-slate-700/50 p-4 rounded-xl border border-slate-600 active:bg-slate-700"
-              accessibilityRole="combobox"
-              accessibilityLabel={t('settings.language')}
-              accessibilityState={{ expanded: isDropdownOpen }}
-            >
-              <Text className="text-lg text-white font-medium">
-                {currentLang === 'es' ? t('settings.languages.es') : t('settings.languages.en')}
-              </Text>
-              <Text className="text-gray-400 text-xs">▼</Text>
-            </Pressable>
-
-            {isDropdownOpen && (
-              <View
-                className="absolute top-full left-0 right-0 mt-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden z-50"
-                style={{
-                  elevation: 10,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 5 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 10,
-                }}
-              >
-                <Pressable
-                  onPress={() => changeLanguage('es')}
-                  className={`p-4 border-b border-slate-700 flex-row justify-between items-center ${currentLang === 'es' ? 'bg-blue-900/40' : 'active:bg-slate-700'}`}
-                  accessibilityRole="menuitem"
-                  accessibilityLabel={t('settings.languages.es')}
-                  accessibilityState={{ selected: currentLang === 'es' }}
-                >
-                  <Text
-                    className={`text-lg ${currentLang === 'es' ? 'font-bold text-blue-400' : 'text-gray-300'}`}
-                  >
-                    {t('settings.languages.es')}
-                  </Text>
-                  {currentLang === 'es' && <Text className="text-blue-400 font-bold">✓</Text>}
-                </Pressable>
-                <Pressable
-                  onPress={() => changeLanguage('en')}
-                  className={`p-4 flex-row justify-between items-center ${currentLang === 'en' ? 'bg-blue-900/40' : 'active:bg-slate-700'}`}
-                  accessibilityRole="menuitem"
-                  accessibilityLabel={t('settings.languages.en')}
-                  accessibilityState={{ selected: currentLang === 'en' }}
-                >
-                  <Text
-                    className={`text-lg ${currentLang === 'en' ? 'font-bold text-blue-400' : 'text-gray-300'}`}
-                  >
-                    {t('settings.languages.en')}
-                  </Text>
-                  {currentLang === 'en' && <Text className="text-blue-400 font-bold">✓</Text>}
-                </Pressable>
-              </View>
-            )}
-          </View>
-        </View>
-
-        {/* Background Section */}
-        <View
-          className="bg-slate-800/90 rounded-2xl p-6 z-10 mb-6 border border-slate-700/50"
-          style={{
-            elevation: 1,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 1,
-          }}
-        >
-          <Text className="text-gray-400 font-bold mb-3 uppercase text-xs tracking-wider">
+        <PixelPanel style={[styles.section, styles.sectionMiddle]}>
+          <PixelText variant="caption" style={styles.sectionLabel}>
             {t('settings.background')}
-          </Text>
-          <View className="relative">
-            <Pressable
-              onPress={() => setIsBackgroundDropdownOpen(!isBackgroundDropdownOpen)}
-              className="flex-row justify-between items-center bg-slate-700/50 p-4 rounded-xl border border-slate-600 active:bg-slate-700"
-            >
-              <Text className="text-lg text-white font-medium">
-                {backgroundOptions.find(o => o.id === backgroundImage)?.label || 'Default'}
-              </Text>
-              <Text className="text-gray-400 text-xs">▼</Text>
-            </Pressable>
+          </PixelText>
+          <PixelSelect
+            label={t('settings.background')}
+            options={backgroundOptions}
+            selectedId={resolveBackground(backgroundImage).id}
+            isOpen={isBackgroundDropdownOpen}
+            onToggle={() => setIsBackgroundDropdownOpen(!isBackgroundDropdownOpen)}
+            onSelect={id => {
+              setBackgroundImage(id);
+              setIsBackgroundDropdownOpen(false);
+            }}
+          />
+        </PixelPanel>
 
-            {isBackgroundDropdownOpen && (
-              <View
-                className="absolute top-full left-0 right-0 mt-2 bg-slate-800 rounded-xl border border-slate-700 overflow-hidden z-50"
-                style={{
-                  elevation: 10,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 5 },
-                  shadowOpacity: 0.3,
-                  shadowRadius: 10,
-                }}
-              >
-                {backgroundOptions.map(option => (
-                  <Pressable
-                    key={option.id}
-                    onPress={() => {
-                      setBackgroundImage(option.id);
-                      setIsBackgroundDropdownOpen(false);
-                    }}
-                    className={`p-4 border-b border-slate-700 flex-row justify-between items-center ${backgroundImage === option.id ? 'bg-blue-900/40' : 'active:bg-slate-700'}`}
-                  >
-                    <Text
-                      className={`text-lg ${backgroundImage === option.id ? 'font-bold text-blue-400' : 'text-gray-300'}`}
-                    >
-                      {option.label}
-                    </Text>
-                    {backgroundImage === option.id && (
-                      <Text className="text-blue-400 font-bold">✓</Text>
-                    )}
-                  </Pressable>
-                ))}
-              </View>
-            )}
-          </View>
-        </View>
-
-        {/* Timer Settings Section */}
-        <View
-          className="bg-slate-800/90 rounded-2xl p-6 mb-6 border border-slate-700/50"
-          style={{
-            elevation: 1,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 1,
-          }}
-        >
-          <Text className="text-gray-400 font-bold mb-4 uppercase text-xs tracking-wider">
+        <PixelPanel style={styles.section}>
+          <PixelText variant="caption" style={styles.sectionLabel}>
             {t('settings.timer')}
-          </Text>
-          <View className="flex-row justify-between">
-            <View className="flex-1 mr-2">
-              <Text className="text-gray-500 font-medium mb-1 text-[10px] uppercase">
-                {t('settings.min_time')}
-              </Text>
-              <TextInput
-                value={String(minTime)}
-                placeholderTextColor="#64748b"
-                onChangeText={text => handleNumberChange(text, setMinTime)}
-                keyboardType="numeric"
-                className="bg-slate-700/50 p-4 rounded-xl border border-slate-600 text-lg font-bold text-white text-center"
-              />
-            </View>
-            <View className="flex-1 ml-2">
-              <Text className="text-gray-500 font-medium mb-1 text-[10px] uppercase">
-                {t('settings.max_time')}
-              </Text>
-              <TextInput
-                value={String(maxTime)}
-                placeholderTextColor="#64748b"
-                onChangeText={text => handleNumberChange(text, setMaxTime)}
-                keyboardType="numeric"
-                className="bg-slate-700/50 p-4 rounded-xl border border-slate-600 text-lg font-bold text-white text-center"
-              />
-            </View>
+          </PixelText>
+          <View style={styles.row}>
+            <NumberField
+              label={t('settings.min_time')}
+              value={minTime}
+              onChange={text => handleNumberChange(text, setMinTime)}
+            />
+            <NumberField
+              label={t('settings.max_time')}
+              value={maxTime}
+              onChange={text => handleNumberChange(text, setMaxTime)}
+            />
           </View>
-        </View>
+        </PixelPanel>
 
-        {/* Game Specific Settings */}
-        <View
-          className="bg-slate-800/90 rounded-2xl p-6 mb-12 border border-slate-700/50"
-          style={{
-            elevation: 1,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 1,
-          }}
-        >
-          <Text className="text-gray-400 font-bold mb-4 uppercase text-xs tracking-wider">
+        <PixelPanel style={[styles.section, styles.sectionLast]}>
+          <PixelText variant="caption" style={styles.sectionLabel}>
             {t('config.game_settings')}
-          </Text>
-
-          <View className="mb-4">
-            <Text className="text-gray-500 font-medium mb-1 text-[10px] uppercase ">
-              {t('config.guess_max')}
-            </Text>
-            <TextInput
-              value={String(guessMax)}
-              placeholderTextColor="#64748b"
-              onChangeText={text => handleNumberChange(text, setGuessMax)}
-              keyboardType="numeric"
-              className="bg-slate-700/50 p-4 rounded-xl border border-slate-600 text-lg font-bold text-white"
+          </PixelText>
+          <NumberField
+            label={t('config.guess_max')}
+            value={guessMax}
+            onChange={text => handleNumberChange(text, setGuessMax)}
+          />
+          <NumberField
+            label={t('config.forbidden_letter_max')}
+            value={forbiddenLetterMax}
+            onChange={text => handleNumberChange(text, setForbiddenLetterMax)}
+          />
+          <View style={styles.row}>
+            <NumberField
+              label={t('config.multiply_min')}
+              value={multiplyMin}
+              onChange={text => handleNumberChange(text, setMultiplyMin)}
+            />
+            <NumberField
+              label={t('config.multiply_max')}
+              value={multiplyMax}
+              onChange={text => handleNumberChange(text, setMultiplyMax)}
             />
           </View>
-
-          <View className="mb-4">
-            <Text className="text-gray-500 font-medium mb-1 text-[10px] uppercase ">
-              {t('config.forbidden_letter_max')}
-            </Text>
-            <TextInput
-              value={String(forbiddenLetterMax)}
-              placeholderTextColor="#64748b"
-              onChangeText={text => handleNumberChange(text, setForbiddenLetterMax)}
-              keyboardType="numeric"
-              className="bg-slate-700/50 p-4 rounded-xl border border-slate-600 text-lg font-bold text-white"
-            />
-          </View>
-
-          <View className="flex-row justify-between">
-            <View className="flex-1 mr-2">
-              <Text className="text-gray-500 font-medium mb-1 text-[10px] uppercase ">
-                {t('config.multiply_min')}
-              </Text>
-              <TextInput
-                value={String(multiplyMin)}
-                placeholderTextColor="#64748b"
-                onChangeText={text => handleNumberChange(text, setMultiplyMin)}
-                keyboardType="numeric"
-                className="bg-slate-700/50 p-4 rounded-xl border border-slate-600 text-lg font-bold text-white text-center"
-              />
-            </View>
-            <View className="flex-1 ml-2">
-              <Text className="text-gray-500 font-medium mb-1 text-[10px] uppercase ">
-                {t('config.multiply_max')}
-              </Text>
-              <TextInput
-                value={String(multiplyMax)}
-                placeholderTextColor="#64748b"
-                onChangeText={text => handleNumberChange(text, setMultiplyMax)}
-                keyboardType="numeric"
-                className="bg-slate-700/50 p-4 rounded-xl border border-slate-600 text-lg font-bold text-white text-center"
-              />
-            </View>
-          </View>
-        </View>
+        </PixelPanel>
       </ScrollView>
 
-      <View className="pb-8">
-        <Pressable
-          onPress={handleSaveAndExit}
-          className="bg-blue-600 py-4 px-6 rounded-2xl active:opacity-90 items-center"
-          accessibilityRole="button"
-          accessibilityLabel={t('settings.back')}
-          style={{
-            elevation: 5,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.2,
-            shadowRadius: 5,
-          }}
-        >
-          <Text className="text-white font-black text-lg uppercase tracking-widest">
-            {t('settings.back')}
-          </Text>
-        </Pressable>
+      <View style={styles.footer}>
+        <PixelButton label={t('settings.back')} size="lg" onPress={handleSaveAndExit} />
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  screen: { flex: 1, paddingHorizontal: PIXEL_UNIT * 6, paddingTop: PIXEL_UNIT * 12 },
+  fill: { flex: 1 },
+  title: {
+    color: palette.yellow,
+    fontSize: 20,
+    lineHeight: 30,
+    textAlign: 'center',
+    marginBottom: PIXEL_UNIT * 6,
+  },
+  section: { marginBottom: PIXEL_UNIT * 6, padding: PIXEL_UNIT * 5 },
+  // Open dropdown menus must render above the following sections.
+  sectionTop: { zIndex: 20 },
+  sectionMiddle: { zIndex: 10 },
+  sectionLast: { marginBottom: PIXEL_UNIT * 12 },
+  sectionLabel: {
+    color: palette.fog,
+    fontSize: 16,
+    textTransform: 'uppercase',
+    marginBottom: PIXEL_UNIT * 3,
+  },
+  selectWrapper: { position: 'relative' },
+  selectField: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: palette.ink,
+    borderWidth: PIXEL_UNIT / 2,
+    borderColor: palette.steel,
+    padding: PIXEL_UNIT * 3,
+  },
+  fieldPressed: { backgroundColor: palette.slate },
+  fieldText: { color: palette.white, fontSize: 20 },
+  selectedText: { color: palette.yellow },
+  caret: { color: palette.fog, fontSize: 10 },
+  menu: {
+    position: 'absolute',
+    top: '100%',
+    left: 0,
+    right: 0,
+    marginTop: PIXEL_UNIT,
+    backgroundColor: palette.night,
+    borderWidth: PIXEL_UNIT / 2,
+    borderColor: palette.black,
+    zIndex: 50,
+  },
+  menuItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: PIXEL_UNIT * 3,
+    borderBottomWidth: PIXEL_UNIT / 2,
+    borderBottomColor: palette.slate,
+  },
+  menuItemSelected: { backgroundColor: palette.navy },
+  row: { flexDirection: 'row', gap: PIXEL_UNIT * 4 },
+  numberField: { flex: 1, marginBottom: PIXEL_UNIT * 3 },
+  fieldLabel: {
+    color: palette.fog,
+    fontSize: 14,
+    textTransform: 'uppercase',
+    marginBottom: PIXEL_UNIT,
+  },
+  input: {
+    backgroundColor: palette.ink,
+    borderWidth: PIXEL_UNIT / 2,
+    borderColor: palette.steel,
+    padding: PIXEL_UNIT * 3,
+    color: palette.white,
+    fontFamily: fonts.title,
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  footer: { paddingBottom: PIXEL_UNIT * 8, paddingTop: PIXEL_UNIT * 2 },
+});

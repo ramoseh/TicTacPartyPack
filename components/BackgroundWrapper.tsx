@@ -1,12 +1,11 @@
-import React, { useMemo } from 'react';
-import { ImageBackground, View, StyleSheet } from 'react-native';
+import React from 'react';
+import { ImageBackground, View, StyleSheet, Platform } from 'react-native';
 import { useSettings } from '../store/SettingsContext';
+import { resolveBackground } from '../theme/backgrounds';
+import { palette } from '../theme/pixel';
 
-// Logic to map background IDs to actual assets
-const backgroundMap: Record<string, ReturnType<typeof require>> = {
-  default: require('../assets/backgrounds/default.png'),
-  // Future backgrounds can be added here
-};
+// React Native Web forwards unknown CSS properties to the DOM.
+const pixelatedWeb = (Platform.OS === 'web' ? { imageRendering: 'pixelated' } : {}) as object;
 
 interface BackgroundWrapperProps {
   children: React.ReactNode;
@@ -14,16 +13,15 @@ interface BackgroundWrapperProps {
 
 export const BackgroundWrapper: React.FC<BackgroundWrapperProps> = ({ children }) => {
   const { backgroundImage } = useSettings();
-
-  const source = useMemo(() => {
-    return backgroundMap[backgroundImage] || backgroundMap['default'];
-  }, [backgroundImage]);
-
-  // If for some reason we want a solid color or gradient fallback instead of an image
-  // we could handle that here. For now, we assume images.
+  const { source } = resolveBackground(backgroundImage);
 
   return (
-    <ImageBackground source={source} style={styles.background} resizeMode="cover">
+    <ImageBackground
+      source={source}
+      style={styles.background}
+      imageStyle={pixelatedWeb}
+      resizeMode="cover"
+    >
       <View style={styles.content}>{children}</View>
     </ImageBackground>
   );
@@ -34,7 +32,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
-    backgroundColor: '#0F0F1B', // Fallback color matching the theme
+    backgroundColor: palette.ink,
   },
   content: {
     flex: 1,

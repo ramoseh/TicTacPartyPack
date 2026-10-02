@@ -28,10 +28,7 @@ const categoriesEN = [
   'Colors',
 ];
 
-export const ALPHABET_ICON = '🔤';
-
 export function getAlphabetPrompt(lang: string = 'es'): string {
   const list = lang.startsWith('es') ? categoriesES : categoriesEN;
-  const category = list[Math.floor(Math.random() * list.length)];
-  return `${ALPHABET_ICON}\n${category}`;
+  return list[Math.floor(Math.random() * list.length)];
 }

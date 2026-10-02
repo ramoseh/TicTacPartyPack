@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { PixelSprite } from './pixel/PixelSprite';
+import { palette } from '../theme/pixel';
+import { clips } from '../theme/sprites';
 
 interface NavigationReadyProps {
   children: React.ReactNode;
+  fontsLoaded: boolean;
 }
 
-export function NavigationReady({ children }: NavigationReadyProps) {
+export function NavigationReady({ children, fontsLoaded }: NavigationReadyProps) {
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -18,20 +22,22 @@ export function NavigationReady({ children }: NavigationReadyProps) {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!isReady) {
+  if (!isReady || !fontsLoaded) {
     return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
-          backgroundColor: '#0F0F1B',
-        }}
-      >
-        <ActivityIndicator size="large" color="#ffffff" />
+      <View style={styles.loading}>
+        <PixelSprite clip={clips.loader} />
       </View>
     );
   }
 
   return <>{children}</>;
 }
+
+const styles = StyleSheet.create({
+  loading: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: palette.ink,
+  },
+});

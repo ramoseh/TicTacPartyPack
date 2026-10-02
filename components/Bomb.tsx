@@ -1,134 +1,84 @@
-import { View, Text, Image, Animated, Easing, Platform } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { Animated, Platform, StyleSheet, View } from 'react-native';
+import { PixelSprite } from './pixel/PixelSprite';
+import { useReducedMotion } from '../hooks/useReducedMotion';
+import { deriveBombVisualState, getIntegerScale, stepsEasing } from '../theme/animation';
+import { PIXEL_UNIT, timings } from '../theme/pixel';
+import { clips, EXPLOSION_PEAK_FRAME, sheets } from '../theme/sprites';
+
 interface BombProps {
   isActive: boolean;
   isExploded?: boolean;
+  onExplosionPeak?: () => void;
 }
 
-export default function Bomb({ isActive, isExploded }: BombProps) {
-  // Animation refs
-  const shakeAnim = useRef(new Animated.Value(0)).current;
-  const explosionScale = useRef(new Animated.Value(0)).current;
-  const explosionOpacity = useRef(new Animated.Value(0)).current;
-  const bombScale = useRef(new Animated.Value(1)).current;
+const CONTAINER_DP = Platform.OS === 'web' ? 192 : 256;
+const BOMB_SCALE = getIntegerScale(sheets.bombIdle.frameWidth, CONTAINER_DP - 32);
+const EXPLOSION_SCALE = getIntegerScale(sheets.explosion.frameWidth, CONTAINER_DP);
+const useNativeDriver = Platform.OS !== 'web';
 
-  // Shake animation when active
+export default function Bomb({ isActive, isExploded = false, onExplosionPeak }: BombProps) {
+  const reduced = useReducedMotion();
+  const [explodeClipEnded, setExplodeClipEnded] = useState(false);
+  const state = deriveBombVisualState(isActive, isExploded, explodeClipEnded);
+  const shake = useRef(new Animated.Value(0)).current;
+  const onPeakRef = useRef(onExplosionPeak);
+  onPeakRef.current = onExplosionPeak;
+
   useEffect(() => {
-    let animation: Animated.CompositeAnimation | null = null;
-    if (isActive) {
-      animation = Animated.loop(
-        Animated.sequence([
-          Animated.timing(shakeAnim, {
-            toValue: 5,
-            duration: 50,
-            useNativeDriver: Platform.OS !== 'web',
-          }),
-          Animated.timing(shakeAnim, {
-            toValue: -5,
-            duration: 50,
-            useNativeDriver: Platform.OS !== 'web',
-          }),
-          Animated.timing(shakeAnim, {
-            toValue: 0,
-            duration: 50,
-            useNativeDriver: Platform.OS !== 'web',
-          }),
-        ])
-      );
-      animation.start();
-    } else {
-      shakeAnim.setValue(0);
+    if (state !== 'armed' || reduced) {
+      shake.setValue(0);
+      return;
     }
-    return () => animation?.stop();
-  }, [isActive]);
+    const step = (toValue: number) =>
+      Animated.timing(shake, {
+        toValue,
+        duration: timings.bombShakeStepMs,
+        easing: stepsEasing(1),
+        useNativeDriver,
+      });
+    const animation = Animated.loop(Animated.sequence([step(PIXEL_UNIT), step(-PIXEL_UNIT)]));
+    animation.start();
+    return () => animation.stop();
+  }, [state, reduced, shake]);
 
-  // Ref for explosion animation
-  const explosionAnimRef = useRef<Animated.CompositeAnimation | null>(null);
-
-  // Explosion animation
   useEffect(() => {
-    if (isExploded) {
-      explosionAnimRef.current = Animated.parallel([
-        // Shrink bomb
-        Animated.timing(bombScale, {
-          toValue: 0,
-          duration: 150,
-          useNativeDriver: Platform.OS !== 'web',
-        }),
-        // Show explosion
-        Animated.sequence([
-          Animated.parallel([
-            Animated.spring(explosionScale, {
-              toValue: Platform.OS === 'web' ? 1.5 : 2.2,
-              friction: 4,
-              tension: 40,
-              useNativeDriver: Platform.OS !== 'web',
-            }),
-            Animated.timing(explosionOpacity, {
-              toValue: 1,
-              duration: 100,
-              useNativeDriver: Platform.OS !== 'web',
-            }),
-          ]),
-          Animated.timing(explosionOpacity, {
-            toValue: 0.8,
-            duration: 1500,
-            useNativeDriver: Platform.OS !== 'web',
-          }),
-        ]),
-      ]);
-      explosionAnimRef.current.start();
-    } else {
-      // Stop any in-progress animation before resetting
-      if (explosionAnimRef.current) {
-        explosionAnimRef.current.stop();
-        explosionAnimRef.current = null;
-      }
-      // Reset animations
-      bombScale.setValue(1);
-      explosionScale.setValue(0);
-      explosionOpacity.setValue(0);
-    }
-  }, [isExploded]);
+    if (state !== 'exploding' || reduced) return;
+    const timer = setTimeout(
+      () => onPeakRef.current?.(),
+      (EXPLOSION_PEAK_FRAME / clips.bombExplode.fps) * 1000
+    );
+    return () => clearTimeout(timer);
+  }, [state, reduced]);
 
-  // Responsive sizing
-  const containerSize = Platform.OS === 'web' ? 'w-48 h-48' : 'w-64 h-64';
-  const imageSize = Platform.OS === 'web' ? 'w-36 h-36' : 'w-52 h-52';
+  const showExplosion = state === 'exploding' || state === 'exploded';
 
   return (
-    <View className={`${containerSize} items-center justify-center relative mb-4`}>
-      {/* The Bomb */}
-      <Animated.View
-        style={{
-          opacity: bombScale.interpolate({
-            inputRange: [0, 1],
-            outputRange: [0, 1],
-          }),
-          transform: [{ translateX: shakeAnim }, { scale: bombScale }],
-        }}
-      >
-        <Image
-          source={require('../assets/images/bomb.png')}
-          className={imageSize}
-          style={{ resizeMode: 'contain' }}
+    <View style={styles.container}>
+      {showExplosion ? (
+        <PixelSprite
+          clip={clips.bombExplode}
+          scale={EXPLOSION_SCALE}
+          onEnd={() => setExplodeClipEnded(true)}
         />
-      </Animated.View>
-
-      {/* The Explosion */}
-      <Animated.View
-        className="absolute"
-        pointerEvents="none"
-        style={{
-          opacity: explosionOpacity,
-          transform: [{ scale: explosionScale }],
-        }}
-      >
-        <Image
-          source={require('../assets/images/explosion.png')}
-          className={imageSize}
-          style={{ resizeMode: 'contain' }}
-        />
-      </Animated.View>
+      ) : (
+        <Animated.View style={{ transform: [{ translateX: shake }] }}>
+          <PixelSprite
+            clip={state === 'armed' ? clips.bombArmed : clips.bombIdle}
+            scale={BOMB_SCALE}
+          />
+        </Animated.View>
+      )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    width: CONTAINER_DP,
+    height: CONTAINER_DP,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+});
