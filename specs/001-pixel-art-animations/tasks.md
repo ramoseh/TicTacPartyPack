@@ -179,7 +179,7 @@ Reglas comunes de [contracts/components.md](./contracts/components.md#reglas-com
 
 **Purpose**: Arte final, limpieza, documentación y presupuestos
 
-- [ ] T060 Sustituir cualquier export provisional restante de T012 por el arte final en `assets/pixel-src/export/`, ejecutar `npm run sprites` y completar `assets/LICENSES.md` (FR-024)
+- [x] T060 Sustituir cualquier export provisional restante de T012 por el arte final en `assets/pixel-src/export/`, ejecutar `npm run sprites` y completar `assets/LICENSES.md` (FR-024)
 - [x] T061 Eliminar `assets/images/bomb.png` y `assets/images/explosion.png` tras comprobar con búsqueda que no tienen referencias
 - [x] T062 [P] Actualizar la sección _Styling_ de `CLAUDE.md` con el kit `components/pixel/`, `theme/`, `npm run sprites`, `useReducedMotion` y `usePixelNavigation`
 - [x] T063 Medir el bundle con `npx expo export --platform android` y comprobar ≤ 5 MB sobre la línea base de T004 (SC-007)
