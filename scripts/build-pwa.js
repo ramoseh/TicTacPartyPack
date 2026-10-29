@@ -174,10 +174,13 @@ function validatePrecache({
 function validateHtml(documents) {
   const errors = [];
   documents.forEach(({ file, content }) => {
-    if (!content.includes('rel="manifest"') || !content.includes('href="/manifest.json"')) {
+    if (
+      !content.includes('rel="manifest"') ||
+      !/href="(?:\/[^" ]+)?\/manifest\.json"/.test(content)
+    ) {
       errors.push(`${file}: missing manifest link`);
     }
-    if (!/navigator\.serviceWorker\.register\(\s*['"]\/sw\.js['"]/.test(content)) {
+    if (!/navigator\.serviceWorker\.register\(\s*['"](?:\/[^'" ]+)?\/sw\.js['"]/.test(content)) {
       errors.push(`${file}: missing production service worker registration`);
     }
     if (content.includes('controllerchange')) {
@@ -196,7 +199,8 @@ function validateReferences(documents, files) {
     );
     references.forEach(reference => {
       const relative = decodeURIComponent(reference.slice(1));
-      if (!fileSet.has(relative)) {
+      const candidates = [relative, relative.replace(/^TicTacPartyPack\//, '')];
+      if (!candidates.some(candidate => fileSet.has(candidate))) {
         errors.push(`${file}: referenced asset does not exist: ${reference}`);
       }
     });
