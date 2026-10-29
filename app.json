@@ -30,7 +30,7 @@
       "favicon": "./assets/favicon.png"
     },
     "experiments": {
-      "baseUrl": "/TicTacPartyPack"
+      "baseUrl": ""
     },
     "plugins": ["expo-router", "expo-font"],
     "extra": {

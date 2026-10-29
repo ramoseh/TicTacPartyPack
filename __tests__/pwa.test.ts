@@ -44,7 +44,7 @@ describe('web export configuration', () => {
     expect(app.expo.web.bundler).toBe('metro');
     expect(app.expo.web.output).toBe('static');
     expect(app.expo.web.favicon).toBe('./assets/favicon.png');
-    expect(app.expo.experiments.baseUrl).toBe('/TicTacPartyPack');
+    expect(app.expo.experiments.baseUrl).toBe('');
   });
 });
 
