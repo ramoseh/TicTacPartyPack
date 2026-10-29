@@ -16,6 +16,11 @@ import { usePixelNavigation } from '../../hooks/usePixelNavigation';
 
 import { useSettings } from '../../store/SettingsContext';
 import { palette, PIXEL_UNIT, timings } from '../../theme/pixel';
+import {
+  HELP_BUTTON_HIT_SLOP,
+  HELP_BUTTON_ICON_SIZE,
+  isHelpButtonVisible,
+} from '../../theme/gameUi';
 
 const SHAKE_OFFSETS = [2, -2, 1, -1, 1, 0].map(step => step * PIXEL_UNIT);
 const shakeInput = SHAKE_OFFSETS.flatMap((_, i) => [
@@ -180,15 +185,16 @@ export default function Game() {
         </View>
 
         {/* Config/Instructions Button */}
-        {!isActive && !isSimpleMode && (
+        {isHelpButtonVisible(isSimpleMode, isActive) && (
           <View style={[styles.corner, styles.cornerRight]}>
             <Pressable
               onPress={() => setShowInstructions(true)}
-              style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
+              hitSlop={HELP_BUTTON_HIT_SLOP}
+              style={({ pressed }) => [styles.helpButton, pressed && styles.iconPressed]}
               accessibilityRole="button"
               accessibilityLabel={t('game.how_to_play')}
             >
-              <PixelIcon name="help" size={40} />
+              <PixelIcon name="help" size={HELP_BUTTON_ICON_SIZE} />
             </Pressable>
           </View>
         )}
@@ -314,6 +320,7 @@ const styles = StyleSheet.create({
   cornerLeft: { left: PIXEL_UNIT * 6 },
   cornerRight: { right: PIXEL_UNIT * 6 },
   iconButton: { padding: PIXEL_UNIT * 2 },
+  helpButton: { padding: PIXEL_UNIT * 3, zIndex: 30, elevation: 10 },
   iconPressed: { transform: [{ translateY: PIXEL_UNIT }] },
   badge: {
     backgroundColor: palette.ink,
