@@ -104,6 +104,13 @@
       "simulate_hint": "Manually triggers the explosion"
     }
   },
+  "donation": {
+    "message": "Enjoying the game? Buy me a coffee",
+    "action": "Donate",
+    "dismiss": "Not now",
+    "close": "Close",
+    "error": "Could not open the link. Check your connection."
+  },
   "bomb": {
     "status": {
       "tictac": "TIC TAC",

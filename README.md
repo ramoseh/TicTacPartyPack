@@ -108,6 +108,20 @@ Personaliza tu experiencia desde la pantalla de ajustes:
 - **Tiempo máximo de bomba**: Configurable en segundos
 - **Fondo de pantalla**: Personaliza la apariencia
 
+### Donaciones (opcional)
+
+Tras completar 10 rondas, la app puede mostrar una tarjeta no intrusiva para invitar a apoyar al creador. El aviso aparece una sola vez por instalación, se auto-oculta a los 15 s y abre Ko-fi en el navegador externo.
+
+Para activarlo, edita `constants/donation.ts` y asigna tu URL HTTPS:
+
+```ts
+export const DONATION_URL = 'https://ko-fi.com/tu-usuario';
+```
+
+- Solo se aceptan URLs absolutas `https://`. Con el valor vacío (por defecto), la feature queda dormida y no se muestra nada.
+- El umbral (`DONATION_ROUNDS_TARGET = 10`) y el auto-ocultado (`DONATION_AUTO_HIDE_MS = 15000`) se ajustan en el mismo archivo.
+- No hay backend, pagos dentro de la app, analítica ni verificación de la donación.
+
 ## 🚢 Deployment con Expo
 
 ### Construcción para producción

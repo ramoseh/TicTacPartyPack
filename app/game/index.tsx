@@ -6,14 +6,22 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 
 import Bomb from '../../components/Bomb';
 import ChallengeDisplay from '../../components/ChallengeDisplay';
+import DonationPrompt from '../../components/DonationPrompt';
 import GameInstructions from '../../components/GameInstructions';
 import { PixelButton } from '../../components/pixel/PixelButton';
 import { PixelIcon } from '../../components/pixel/PixelIcon';
 import { PixelText } from '../../components/pixel/PixelText';
+import { isDonationConfigured } from '../../constants/donation';
 import { getRandomGame, GameChallenge, GameType } from '../../services/gameRouter';
 import { SoundManager } from '../../services/SoundManager';
 import { usePixelNavigation } from '../../hooks/usePixelNavigation';
 
+import { createDonationGate, DonationGate } from '../../store/donationGate';
+import {
+  markDonationPromptShown,
+  recordCompletedRound,
+  shouldShowDonationPrompt,
+} from '../../store/donationPrompt';
 import { useSettings } from '../../store/SettingsContext';
 import { palette, PIXEL_UNIT, timings } from '../../theme/pixel';
 import {
@@ -53,10 +61,20 @@ export default function Game() {
   // State for the current challenge
   const [challenge, setChallenge] = useState<GameChallenge | null>(null);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [donationVisible, setDonationVisible] = useState(false);
 
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const lastGameTypeRef = useRef<GameType | null>(null);
   const impact = useRef(new Animated.Value(1)).current;
+  const donationGateRef = useRef<DonationGate | null>(null);
+  if (!donationGateRef.current) {
+    donationGateRef.current = createDonationGate({
+      setVisible: setDonationVisible,
+      markShown: () => {
+        void markDonationPromptShown();
+      },
+    });
+  }
 
   // Bomb only calls this when reduced motion is off.
   const handleExplosionPeak = useCallback(() => {
@@ -107,6 +125,7 @@ export default function Game() {
   // Cleanup sounds on unmount
   useEffect(() => {
     return () => {
+      donationGateRef.current?.dispose();
       SoundManager.unload();
       if (timerRef.current) clearTimeout(timerRef.current);
       SoundManager.stopTick();
@@ -123,6 +142,7 @@ export default function Game() {
   }, [isActive]);
 
   const handleNewRound = () => {
+    donationGateRef.current?.startRound();
     setIsExploded(false);
     setIsActive(false);
     setRoundKey(prev => prev + 1); // Force Bomb component to remount
@@ -138,6 +158,7 @@ export default function Game() {
   };
 
   const igniteBomb = () => {
+    donationGateRef.current?.startRound();
     setIsExploded(false);
     setIsActive(true);
     SoundManager.playTick();
@@ -161,6 +182,24 @@ export default function Game() {
     setIsExploded(true);
     SoundManager.playExplode();
     if (timerRef.current) clearTimeout(timerRef.current);
+
+    const gate = donationGateRef.current;
+    if (!gate) return;
+    const token = gate.beginExplosion();
+
+    void recordCompletedRound().then(recorded => {
+      gate.reveal(token, isDonationConfigured() && shouldShowDonationPrompt(recorded));
+    });
+  };
+
+  const openInstructions = () => {
+    donationGateRef.current?.openInstructions();
+    setShowInstructions(true);
+  };
+
+  const closeInstructions = () => {
+    donationGateRef.current?.closeInstructions();
+    setShowInstructions(false);
   };
 
   const handleBack = async () => {
@@ -169,147 +208,150 @@ export default function Game() {
   };
 
   return (
-    <Animated.View
-      style={[styles.fill, { transform: [{ translateX: shakeX }, { translateY: shakeX }] }]}
-    >
-      <View className="flex-1 items-center justify-center pb-32">
-        <View style={[styles.corner, styles.cornerLeft]}>
-          <Pressable
-            onPress={handleBack}
-            style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
-            accessibilityRole="button"
-            accessibilityLabel={t('game.back')}
-          >
-            <PixelIcon name="back" size={40} />
-          </Pressable>
-        </View>
-
-        {/* Config/Instructions Button */}
-        {isHelpButtonVisible(isSimpleMode, isActive) && (
-          <View style={[styles.corner, styles.cornerRight]}>
+    <View style={styles.fill}>
+      <Animated.View
+        style={[styles.fill, { transform: [{ translateX: shakeX }, { translateY: shakeX }] }]}
+      >
+        <View className="flex-1 items-center justify-center pb-32">
+          <View style={[styles.corner, styles.cornerLeft]}>
             <Pressable
-              onPress={() => setShowInstructions(true)}
-              hitSlop={HELP_BUTTON_HIT_SLOP}
-              style={({ pressed }) => [styles.helpButton, pressed && styles.iconPressed]}
+              onPress={handleBack}
+              style={({ pressed }) => [styles.iconButton, pressed && styles.iconPressed]}
               accessibilityRole="button"
-              accessibilityLabel={t('game.how_to_play')}
+              accessibilityLabel={t('game.back')}
             >
-              <PixelIcon name="help" size={HELP_BUTTON_ICON_SIZE} />
+              <PixelIcon name="back" size={40} />
             </Pressable>
           </View>
-        )}
 
-        {challenge && (
-          <View style={styles.badge}>
-            <PixelText variant="caption" style={styles.badgeText}>
-              {t(`instructions.${challenge.type}.title`)}
-            </PixelText>
-          </View>
-        )}
-
-        <PixelText
-          variant="title"
-          numberOfLines={1}
-          adjustsFontSizeToFit
-          style={[
-            styles.status,
-            isExploded ? styles.statusBoom : isActive ? styles.statusActive : styles.statusReady,
-          ]}
-        >
-          {isExploded
-            ? t('game.status.boom')
-            : isActive
-              ? t('game.status.quick')
-              : t('game.status.ready')}
-        </PixelText>
-
-        {isSimpleMode && (
-          <View style={[styles.badge, styles.badgeSimple]}>
-            <PixelText variant="caption" style={[styles.badgeText, styles.badgeSimpleText]}>
-              {t('config.modes.simple')}
-            </PixelText>
-          </View>
-        )}
-
-        <Bomb
-          key={roundKey}
-          isActive={isActive}
-          isExploded={isExploded}
-          onExplosionPeak={handleExplosionPeak}
-        />
-
-        <View className="min-h-[280px] justify-center items-center w-full">
-          {/* Show Challenge ONLY if NOT in Simple Mode */}
-          {(isActive || isExploded) && !isSimpleMode && challenge ? (
-            <View className="items-center">
-              <ChallengeDisplay
-                prompt={challenge.prompt}
-                instructionKey={challenge.instruction}
-                type={challenge.type}
-                isActive={isActive}
-                isExploded={isExploded}
-              />
+          {/* Config/Instructions Button */}
+          {isHelpButtonVisible(isSimpleMode, isActive) && (
+            <View style={[styles.corner, styles.cornerRight]}>
+              <Pressable
+                onPress={openInstructions}
+                hitSlop={HELP_BUTTON_HIT_SLOP}
+                style={({ pressed }) => [styles.helpButton, pressed && styles.iconPressed]}
+                accessibilityRole="button"
+                accessibilityLabel={t('game.how_to_play')}
+              >
+                <PixelIcon name="help" size={HELP_BUTTON_ICON_SIZE} />
+              </Pressable>
             </View>
-          ) : (isActive || isExploded) && isSimpleMode ? (
-            <View className="items-center">
-              <PixelText variant="title" blink={isActive} style={styles.ticTac}>
-                TIC TAC...
+          )}
+
+          {challenge && (
+            <View style={styles.badge}>
+              <PixelText variant="caption" style={styles.badgeText}>
+                {t(`instructions.${challenge.type}.title`)}
               </PixelText>
             </View>
-          ) : (
-            // Placeholder when waiting to start
-            <ChallengeDisplay isPlaceholder />
           )}
-        </View>
 
-        <View className="absolute bottom-12 w-full px-12 z-20">
-          {!isActive ? (
-            isExploded ? (
-              <PixelButton
-                label={t('game.actions.next')}
-                variant="secondary"
-                size="lg"
-                onPress={handleNewRound}
-              />
-            ) : (
-              <View style={styles.buttonStack}>
-                <PixelButton
-                  label={t('game.actions.start_bomb')}
-                  variant="danger"
-                  size="lg"
-                  icon="bomb"
-                  onPress={igniteBomb}
-                />
-                <PixelButton
-                  label={t('game.actions.new_round')}
-                  variant="ghost"
-                  onPress={handleNewRound}
+          <PixelText
+            variant="title"
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            style={[
+              styles.status,
+              isExploded ? styles.statusBoom : isActive ? styles.statusActive : styles.statusReady,
+            ]}
+          >
+            {isExploded
+              ? t('game.status.boom')
+              : isActive
+                ? t('game.status.quick')
+                : t('game.status.ready')}
+          </PixelText>
+
+          {isSimpleMode && (
+            <View style={[styles.badge, styles.badgeSimple]}>
+              <PixelText variant="caption" style={[styles.badgeText, styles.badgeSimpleText]}>
+                {t('config.modes.simple')}
+              </PixelText>
+            </View>
+          )}
+
+          <Bomb
+            key={roundKey}
+            isActive={isActive}
+            isExploded={isExploded}
+            onExplosionPeak={handleExplosionPeak}
+          />
+
+          <View className="min-h-[280px] justify-center items-center w-full">
+            {/* Show Challenge ONLY if NOT in Simple Mode */}
+            {(isActive || isExploded) && !isSimpleMode && challenge ? (
+              <View className="items-center">
+                <ChallengeDisplay
+                  prompt={challenge.prompt}
+                  instructionKey={challenge.instruction}
+                  type={challenge.type}
+                  isActive={isActive}
+                  isExploded={isExploded}
                 />
               </View>
-            )
-          ) : (
-            <PixelButton
-              label={t('game.actions.simulate')}
-              variant="ghost"
-              accessibilityHint={t('game.actions.simulate_hint')}
-              onPress={handleExplosion}
+            ) : (isActive || isExploded) && isSimpleMode ? (
+              <View className="items-center">
+                <PixelText variant="title" blink={isActive} style={styles.ticTac}>
+                  TIC TAC...
+                </PixelText>
+              </View>
+            ) : (
+              // Placeholder when waiting to start
+              <ChallengeDisplay isPlaceholder />
+            )}
+          </View>
+
+          <View className="absolute bottom-12 w-full px-12 z-20">
+            {!isActive ? (
+              isExploded ? (
+                <PixelButton
+                  label={t('game.actions.next')}
+                  variant="secondary"
+                  size="lg"
+                  onPress={handleNewRound}
+                />
+              ) : (
+                <View style={styles.buttonStack}>
+                  <PixelButton
+                    label={t('game.actions.start_bomb')}
+                    variant="danger"
+                    size="lg"
+                    icon="bomb"
+                    onPress={igniteBomb}
+                  />
+                  <PixelButton
+                    label={t('game.actions.new_round')}
+                    variant="ghost"
+                    onPress={handleNewRound}
+                  />
+                </View>
+              )
+            ) : (
+              <PixelButton
+                label={t('game.actions.simulate')}
+                variant="ghost"
+                accessibilityHint={t('game.actions.simulate_hint')}
+                onPress={handleExplosion}
+              />
+            )}
+          </View>
+
+          {challenge && (
+            <GameInstructions
+              isVisible={showInstructions}
+              onClose={closeInstructions}
+              gameType={challenge.type}
+              guessMax={guessMax}
+              multiplyMin={multiplyMin}
+              multiplyMax={multiplyMax}
             />
           )}
         </View>
-
-        {challenge && (
-          <GameInstructions
-            isVisible={showInstructions}
-            onClose={() => setShowInstructions(false)}
-            gameType={challenge.type}
-            guessMax={guessMax}
-            multiplyMin={multiplyMin}
-            multiplyMax={multiplyMax}
-          />
-        )}
-      </View>
-      <Animated.View style={[StyleSheet.absoluteFill, styles.flash, { opacity: flashOpacity }]} />
-    </Animated.View>
+        <Animated.View style={[StyleSheet.absoluteFill, styles.flash, { opacity: flashOpacity }]} />
+      </Animated.View>
+      <DonationPrompt visible={donationVisible} onClose={() => setDonationVisible(false)} />
+    </View>
   );
 }
 
