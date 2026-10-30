@@ -2,7 +2,16 @@
   "home": {
     "title": "TicTac\nPartyPack",
     "play": "Jugar",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "install": "Instalar app",
+    "install_hint": "Añade la app a tu pantalla de inicio",
+    "install_ios": {
+      "title": "Instalar en iOS",
+      "step_share": "1. En Safari, toca el botón Compartir.",
+      "step_add": "2. Elige «Añadir a pantalla de inicio».",
+      "step_confirm": "3. Toca «Añadir» y abre la app desde el icono.",
+      "close": "Entendido"
+    }
   },
   "settings": {
     "title": "Configuración",

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { PixelButton } from '../components/pixel/PixelButton';
 import { PixelIcon } from '../components/pixel/PixelIcon';
 import { PixelText } from '../components/pixel/PixelText';
+import { PwaInstallButton } from '../components/PwaInstallButton';
 import { usePixelNavigation } from '../hooks/usePixelNavigation';
 import { palette, PIXEL_UNIT } from '../theme/pixel';
 
@@ -29,6 +30,7 @@ export default function Home() {
           icon="settings"
           onPress={() => navigation.push('/settings')}
         />
+        <PwaInstallButton />
       </View>
     </View>
   );

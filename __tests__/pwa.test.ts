@@ -152,4 +152,12 @@ describe('root HTML document', () => {
     expect(html).toContain("window.addEventListener('load'");
     expect(html).not.toContain('controllerchange');
   });
+
+  it('captures beforeinstallprompt before the app hydrates', () => {
+    const html = source();
+
+    expect(html).toContain('beforeinstallprompt');
+    expect(html).toContain('__pwaInstallPrompt');
+    expect(html).toContain('preventDefault');
+  });
 });

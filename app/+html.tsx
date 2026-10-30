@@ -15,6 +15,15 @@ if ('serviceWorker' in navigator) {
 }
 `;
 
+// Keep the install prompt available even if the event fires before hydration.
+const installPromptCapture = `
+window.__pwaInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', function (event) {
+  event.preventDefault();
+  window.__pwaInstallPrompt = event;
+});
+`;
+
 // Root HTML for every statically exported web route (Expo SDK 54 / expo-router 6).
 export default function Root({ children }: PropsWithChildren) {
   return (
@@ -30,6 +39,7 @@ export default function Root({ children }: PropsWithChildren) {
         <meta name="apple-mobile-web-app-title" content="TicTac" />
         <ScrollViewStyleReset />
         <style dangerouslySetInnerHTML={{ __html: backgroundStyle }} />
+        <script dangerouslySetInnerHTML={{ __html: installPromptCapture }} />
         {process.env.NODE_ENV === 'production' && (
           <script dangerouslySetInnerHTML={{ __html: serviceWorkerRegistration }} />
         )}
