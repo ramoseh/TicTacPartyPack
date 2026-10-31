@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, Linking, Platform, StyleSheet, View } from 'react-native';
+import { AccessibilityInfo, Animated, Platform, StyleSheet, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
-import { DONATION_AUTO_HIDE_MS, DONATION_URL, isDonationConfigured } from '../constants/donation';
+import { DONATION_AUTO_HIDE_MS, isDonationConfigured } from '../constants/donation';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+import { openDonationPage } from '../services/donationLink';
 import { stepsEasing } from '../theme/animation';
 import { palette, PIXEL_UNIT, timings } from '../theme/pixel';
 import { PixelButton } from './pixel/PixelButton';
@@ -62,24 +63,13 @@ export default function DonationPrompt({ visible, onClose }: DonationPromptProps
   if (!isDonationConfigured()) return null;
 
   const handleDonate = () => {
-    if (Platform.OS === 'web') {
-      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-        setError(true);
-        return;
-      }
-      // `noopener` makes window.open return null even on success; never inspect it.
-      try {
-        window.open(DONATION_URL, '_blank', 'noopener,noreferrer');
+    void openDonationPage().then(opened => {
+      if (opened) {
         onCloseRef.current();
-      } catch {
+      } else {
         setError(true);
       }
-      return;
-    }
-
-    Linking.openURL(DONATION_URL)
-      .then(() => onCloseRef.current())
-      .catch(() => setError(true));
+    });
   };
 
   return (

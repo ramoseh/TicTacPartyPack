@@ -121,6 +121,7 @@ export const DONATION_URL = 'https://ko-fi.com/tu-usuario';
 - Solo se aceptan URLs absolutas `https://`. Con el valor vacío (por defecto), la feature queda dormida y no se muestra nada.
 - El umbral (`DONATION_ROUNDS_TARGET = 10`) y el auto-ocultado (`DONATION_AUTO_HIDE_MS = 15000`) se ajustan en el mismo archivo.
 - No hay backend, pagos dentro de la app, analítica ni verificación de la donación.
+- Inicio muestra además un icono de moneda discreto en la esquina superior derecha, solo mientras haya una URL configurada. Abre la misma página externa; si falla, no muestra error.
 
 ## 🚢 Deployment con Expo
 

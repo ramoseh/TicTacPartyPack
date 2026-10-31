@@ -87,6 +87,7 @@ La invitación respeta el ritmo del juego: solo aparece cuando una ronda ya term
 - **FR-012**: Un fallo de almacenamiento MUST NOT impedir jugar ni provocar un crash; el aviso es una mejora best-effort.
 - **FR-013**: El sistema MUST NOT enviar datos a un backend, usar analytics ni intentar verificar si la donación se completó.
 - **FR-014**: El sistema MUST marcar el aviso como mostrado en cuanto aparece, para que no vuelva a mostrarse aunque la persona no interactúe con él.
+- **FR-015**: Inicio MUST mostrar un icono discreto y permanente para donar cuando la URL esté configurada, sin UI de error si la apertura falla; con la URL vacía MUST permanecer oculto.
 
 ### Key Entities
 
@@ -110,7 +111,7 @@ La invitación respeta el ritmo del juego: solo aparece cuando una ronda ya term
 - La donación es voluntaria, sin recompensas, contenido desbloqueable ni reconocimiento dentro de la app.
 - La plataforma elegida es Ko-fi; la URL se añadirá cuando el creador cree su página.
 - Mientras la URL no exista, la feature queda dormida y no se muestra ningún aviso.
-- El aviso solo vive en la pantalla de juego; no se añade un acceso permanente en Inicio o Ajustes.
+- El aviso solo vive en la pantalla de juego; Inicio añade únicamente un icono discreto y permanente, y Ajustes no añade ningún acceso.
 - La app solo abre la página externa: no procesa pagos ni conoce el resultado de la donación.
 - El conteo es acumulado y no se reinicia al cambiar de modo o de idioma.
 - El aviso se oculta automáticamente a los 15 segundos para no quedarse sobre la pantalla indefinidamente.

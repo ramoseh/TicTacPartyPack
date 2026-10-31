@@ -1,5 +1,6 @@
 import { View, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { DonationIconButton } from '../components/DonationIconButton';
 import { PixelButton } from '../components/pixel/PixelButton';
 import { PixelIcon } from '../components/pixel/PixelIcon';
 import { PixelText } from '../components/pixel/PixelText';
@@ -32,6 +33,7 @@ export default function Home() {
         />
         <PwaInstallButton />
       </View>
+      <DonationIconButton />
     </View>
   );
 }
