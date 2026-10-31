@@ -6,6 +6,7 @@ dist/
 build/
 .specify/
 .github/skills/
+.superpowers/
 *.log
 package-lock.json
 yarn.lock

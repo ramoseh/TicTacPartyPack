@@ -104,6 +104,13 @@
       "simulate_hint": "Detona la bomba manualmente"
     }
   },
+  "donation": {
+    "message": "¿Te gusta el juego? Invítame un café",
+    "action": "Donar",
+    "dismiss": "Ahora no",
+    "close": "Cerrar",
+    "error": "No se pudo abrir el enlace. Revisa tu conexión."
+  },
   "bomb": {
     "status": {
       "tictac": "TIC TAC",
