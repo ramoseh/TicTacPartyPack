@@ -107,6 +107,7 @@
   "donation": {
     "message": "¿Te gusta el juego? Invítame un café",
     "action": "Donar",
+    "support": "Apoyar el proyecto",
     "dismiss": "Ahora no",
     "close": "Cerrar",
     "error": "No se pudo abrir el enlace. Revisa tu conexión."

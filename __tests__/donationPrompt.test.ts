@@ -36,7 +36,8 @@ describe('donation configuration', () => {
   });
 
   it('keeps the build constant empty or valid when the creator configures it', () => {
-    expect(DONATION_URL === '' || isDonationConfigured(DONATION_URL)).toBe(true);
+    const configuredUrl: string = DONATION_URL;
+    expect(configuredUrl === '' || isDonationConfigured(configuredUrl)).toBe(true);
   });
 
   it('exposes the documented threshold and auto-hide', () => {

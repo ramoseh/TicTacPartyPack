@@ -107,6 +107,7 @@
   "donation": {
     "message": "Enjoying the game? Buy me a coffee",
     "action": "Donate",
+    "support": "Support the project",
     "dismiss": "Not now",
     "close": "Close",
     "error": "Could not open the link. Check your connection."

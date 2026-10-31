@@ -111,7 +111,7 @@
 **Purpose**: acceso permanente y no intrusivo, además del aviso único de la partida.
 
 - [x] T029 [P] Extraer a `services/donationLink.ts` la apertura de la URL con dependencias inyectables, conservando la comprobación HTTPS, `navigator.onLine` y la pestaña nueva en web.
-- [x] T030 Crear `components/DonationIconButton.tsx`: icono de moneda de 24 px, objetivo táctil de 48 px, esquina superior derecha, visible solo con URL configurada y sin UI de error.
+- [x] T030 Crear `components/DonationIconButton.tsx`: moneda de 32 px con resplandor, texto «Apoyar el proyecto» / «Support the project», objetivo táctil de 48 px, esquina superior derecha, visible solo con URL configurada y sin UI de error.
 - [x] T031 Integrar el icono en `app/index.tsx` sin alterar el layout de Jugar, Configuración ni el botón de instalar PWA.
 - [x] T032 [P] Añadir `__tests__/donationLink.test.ts` para URL dormida, web online/offline, fallo de pestaña, nativo correcto y nativo rechazado.
 - [x] T033 Actualizar `spec.md` y `README.md` para reflejar el acceso desde Inicio.

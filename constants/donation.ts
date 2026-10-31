@@ -1,6 +1,5 @@
-// Pega aquí la URL de la página de Ko-fi cuando exista.
-// Mientras esté vacía (o no sea https), el aviso de donación permanece dormido.
-export const DONATION_URL = '';
+// Mientras esté vacía (o no sea https), el aviso y el icono de donación permanecen ocultos.
+export const DONATION_URL = 'https://ko-fi.com/hivan17';
 
 export const DONATION_ROUNDS_TARGET = 10;
 
